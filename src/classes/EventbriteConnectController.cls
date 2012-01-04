@@ -241,6 +241,10 @@ public with sharing class EventbriteConnectController {
 						
 				memberMap.put((cm.contactId == null) ? cm.leadId : cm.contactId, cm);
 			}
+			
+			// update the campaign with this eventbrite id
+			campaign cmp = new campaign(id = campaignId, eventbrite_event_id__c = ebEvent.id);
+			update cmp;
 		}
 		
 		// map the existing order opps
@@ -869,7 +873,7 @@ public with sharing class EventbriteConnectController {
 		system.assertEquals('Magna-SUN', result[1].lastname);
 		system.assertEquals('Updated matching ' + contactLabel + '. ', result[1].summary);
 		
-		list<campaignMember> cm = [select id, status, Eventbrite_Ticket_Quantity__c, Eventbrite_Attendees_Checked_In__c, contactid, contact.birthdate, lead.postalcode from campaignmember where campaign.id =: ccr.CampaignId order by Eventbrite_Attendees_Checked_In__c];
+		list<campaignMember> cm = [select id, campaign.eventbrite_event_id__c, status, Eventbrite_Ticket_Quantity__c, Eventbrite_Attendees_Checked_In__c, contactid, contact.birthdate, lead.postalcode from campaignmember where campaign.id =: ccr.CampaignId order by Eventbrite_Attendees_Checked_In__c];
 		system.assertEquals(2, cm.size());
 		system.assertEquals('98236', cm[0].lead.postalcode);
 		system.assertEquals(2, cm[0].Eventbrite_Ticket_Quantity__c);
@@ -877,6 +881,7 @@ public with sharing class EventbriteConnectController {
 		system.assertEquals(2010, cm[1].contact.birthdate.year());
 		system.assertEquals(2, cm[1].Eventbrite_Ticket_Quantity__c);
 		system.assertEquals(1, cm[1].Eventbrite_Attendees_Checked_In__c);
+		system.assertEquals('586701841', cm[1].campaign.eventbrite_event_id__c);
 
 		list<opportunity> oo = [select id, name, campaignId from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(0, oo.size());		
