@@ -2,6 +2,52 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>Eventbrite_Answers__c</fullName>
+        <externalId>false</externalId>
+        <label>Eventbrite Answers</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Attendees_Checked_In__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Number of attendees who were checked in for the event via Eventbrite mobile app or website.</inlineHelpText>
+        <label>Attendees Checked In</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Barcodes__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>One or more Eventbrite barcodes for this campaign member, separated by semicolons.</inlineHelpText>
+        <label>Eventbrite Barcodes</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Checkins__c</fullName>
+        <externalId>false</externalId>
+        <label>Barcodes Checked In</label>
+        <length>32768</length>
+        <type>LongTextArea</type>
+        <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Ticket_Quantity__c</fullName>
+        <externalId>false</externalId>
+        <label>Ticket Quantity</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>LeadSource</fullName>
         <picklist>
             <picklistValues>

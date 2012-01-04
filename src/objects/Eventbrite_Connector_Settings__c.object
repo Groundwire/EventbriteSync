@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <customSettingsVisibility>Protected</customSettingsVisibility>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>API_User_Key__c</fullName>
+        <externalId>false</externalId>
+        <label>API User Key</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campaign_Member_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Campaign Member Status</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campaign_Record_Type_for_New_Campaigns__c</fullName>
+        <externalId>false</externalId>
+        <label>Campaign Record Type for New Campaigns</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campaign_Status__c</fullName>
+        <externalId>false</externalId>
+        <label>Campaign Status</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Campaign_Type_for_New_Campaigns__c</fullName>
+        <externalId>false</externalId>
+        <label>Campaign Type for New Campaigns</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Create_Accounts__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>If checked, we will create new accounts when company name is not unrecognized.</inlineHelpText>
+        <label>Create Accounts</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Lead_Source__c</fullName>
+        <externalId>false</externalId>
+        <label>Lead Source</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opp_Contact_Role__c</fullName>
+        <externalId>false</externalId>
+        <label>Opp Contact Role</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opp_Record_Type_Name__c</fullName>
+        <externalId>false</externalId>
+        <label>Opp Record Type Name</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Opp_Stage__c</fullName>
+        <defaultValue>&quot;Closed Won&quot;</defaultValue>
+        <externalId>false</externalId>
+        <label>Opp Stage</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Option_for_Campaign__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>0 = Existing Campaign, 1 = New Campaign, 2 = No Campaign</inlineHelpText>
+        <label>Option for Campaign</label>
+        <precision>1</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Option_for_Leads_or_Contacts__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>0 = Create Leads, 1 = Create Contacts, 2 = Create Contacts and Opps</inlineHelpText>
+        <label>Option for Leads or Contacts</label>
+        <precision>1</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Overwrite_Contact_Detail__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Update contact phone and address from Eventbrite even when they already have values in Salesforce.</inlineHelpText>
+        <label>Overwrite Contact Detail</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Password__c</fullName>
+        <externalId>false</externalId>
+        <label>Password</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Use_Existing_Contact__c</fullName>
+        <defaultValue>true</defaultValue>
+        <externalId>false</externalId>
+        <label>Use Existing Contact</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Use_Other_Home_Address_Fields__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Use Other/Home Address Fields</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Username__c</fullName>
+        <externalId>false</externalId>
+        <label>Username</label>
+        <length>100</length>
+        <required>false</required>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <label>Eventbrite Connector Settings</label>
+</CustomObject>
