@@ -1,0 +1,313 @@
+<apex:page controller="EventbriteConnectController" title="Eventbrite Connect from Groundwire" showHeader="true" sidebar="false" id="pg" >
+
+	<apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/ui-lightness/jquery-ui-1.8.16.custom.css')}" />
+	<apex:includescript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery-1.6.2.min.js')}" />
+	<apex:includescript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery-ui-1.8.16.custom.min.js')}" />
+	<apex:includescript value="{!URLFOR($Resource.EventbriteResources, 'jqEventbrite.js')}" />
+	<apex:includescript value="{!URLFOR($Resource.EventbriteResources, 'jquery.dataTables.nightly.js')}" />
+
+<style>
+ #container
+{
+    width: 95%;
+    margin: 10px auto;
+ 	font-size: 96%;
+ }
+ #ebMain h3 {
+ 	display:block;
+ }
+ table.display tr.row_selected td {
+	background-color: #B0BED9;
+}
+ 
+   </style>
+ 
+  <apex:form >
+  <apex:sectionheader title="Eventbrite Connector" />
+  <div id="container">
+  
+
+<div id="ebMain" >
+	<h3><a href="#">Step 1: Log in to Eventbrite</a></h3>
+	<div id="authSection" >
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" value="" class="text ui-widget-content ui-corner-all" /><br />
+      <label for="password">Password</label>
+      <input type="text" name="password" id="password" value="" class="text ui-widget-content ui-corner-all" /><br />
+      <label for="user_key">-OR- <a href="http://www.eventbrite.com/userkeyapi">User Key</a></label>
+      <input type="text" name="user_key" id="user_key" style="width:200px;" value="12664528613477948638" class="text ui-widget-content ui-corner-all" /><br />
+	  <input type="button" id="authenticate" value="Log in" />
+	</div>
+	
+	<h3><a href="#">Step 2: Select event and attendees</a></h3>
+    <div id="eventSection" >
+	  <table cellpadding="0" cellspacing="0" border="0" class="display">
+	  <tr>
+	  <td width="35%" style="padding-right:10px;vertical-align:top;" >
+      <table cellpadding="0" cellspacing="0" border="0" class="display" id="eventTable" />
+      </td>
+      <td style="vertical-align:top;">
+	      <table cellpadding="0" cellspacing="0" border="0" class="display" id="attendeeTable" />
+		</td>
+		</tr>
+		</table>
+		<input type="button" id="step3" value="Continue" />
+    </div>
+    
+	<h3><a href="#">Step 3: Choose a campaign</a></h3>
+    <div id="campaignSection" >
+    	<h3><a href="#">Import registrations to an existing campaign</a></h3>
+    	<div>
+	      <table cellpadding="0" cellspacing="0" border="0" class="display" id="campaignTable" />
+    	</div>
+    	<h3><a href="#">Import registrations into a new campaign</a></h3>
+    	<div>
+    								<apex:inputField value="{!targetCampaign.StartDate}" />
+							<apex:inputField value="{!targetCampaign.ParentId}" />
+							<apex:inputField value="{!targetCampaign.EndDate}" />
+							<apex:inputField value="{!targetCampaign.Type}" />
+							<apex:inputField value="{!targetCampaign.Status}" />
+    	
+    		<label for="campaignName">Campaign Name: </label>
+	      <input type="text" id="campaignName" name="campaignName" />
+    		<label for="campaignName">Start Date: </label>
+	      <input type="text" id="campaignDate" name="campaignDate" />
+    	</div>
+    	<h3><a href="#">Do not use a campaign</a></h3>
+    	<div>
+    		Registrants will not be added to any campaign.
+    	</div>
+		<input type="button" id="step4" value="Continue" />
+    </div>
+    
+	<h3><a href="#">Step 4: Import</a></h3>
+	<div id="importSection" >
+	<p>
+	Import new attendees as:<br />
+	<input type="radio" name="importType" value="false" checked="checked" /> Contacts<br /> 
+	<input type="radio" name="importType" value="true" /> Leads
+	</p>
+	<p>
+	<input type="checkbox" name="createOpps" value="true" checked="checked" /> Use existing contact where email matches<br />
+	</p>
+	<p>
+	<label for="password">Contact Description: </label>
+	<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all" style="width:300px;height:50px;"/>
+	</p>
+	<p>
+	<input type="checkbox" name="createOpps" value="true" checked="checked" /> Create opportunities for paid events<br /> 
+	</p>
+	<input type="button" id="import" value="Import" />
+	</div>
+
+	<h3><a href="#">Results</a></h3>
+	<div id="resultSection" >
+		      <table cellpadding="0" cellspacing="0" border="0" class="display" id="resultTable" />
+	</div>
+</div>
+<div align="center" style="height:80px; display:block; width:100%; padding:20px; text-align:center;" >
+	<div style="padding:10px; float:left; margin-left:40px;"><a href="http://www.eventbrite.com/r/gw"><img src="{!URLFOR($Resource.EventbriteResources, 'eb_powered.png')}"/></a></div>
+	<div style="padding:10px; text-align:left; height:80px; font-family: Verdana; float:right; margin-right:40px;">
+		brought to you by<br /> 
+		<a href="http://groundwire.org/data"><img src="{!URLFOR($Resource.EventbriteResources, 'GroundwireLogo.png')}"/></a>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript">
+/* 
+TO DO:
+- add select to other tables, preselect
+- process peeps in batches of 50
+- write apex for inserts, hook it up
+- allow auth via user/pwd
+- get and use settings
+- save defaults in settings
+- add more columns and make tables prettier
+- create a place to display errors, handle login/connection probs, other eb errors
+- validate before moving to next step
+- write apex tests, test plan for JS
+*/
+
+  var BATCH_SIZE_EB = 50;
+  var BATCH_SIZE_SF = 100;
+  var API_KEY = "ZJSQ55ARHB2OJPYAQ3";
+  var campaignList = {!campaignJson};
+  var eventTable, attendeeTable, campaignTable;
+  var j$ = jQuery.noConflict(); 
+  j$('document').ready(function(){
+//    $('#menu').bind('click', function(){ $( "#dialog-form" ).dialog("open"); });
+
+/*    $( "#dialog-form" ).dialog({
+      'autoOpen': true,
+      'height': 350,
+      'width': 400,
+      'modal': true,
+      'buttons': {
+      */
+
+		eventTable = j$('#eventTable').dataTable( {
+			"bJQueryUI": true,
+			"bLengthChange": false,
+			"bPaginate": false,
+			"aoColumns": [
+				{ "sTitle": "Id", "bVisible": false },
+				{ "sTitle": "Event", "sWidth": '280px' },
+				{ "sTitle": "Start Date", 
+					"sWidth": '100px',
+					"sClass": "right", 
+					"sType": 'date',
+					"fnRender": function(obj) {
+					console.log(obj.aData);
+						return (j$.datepicker.formatDate('mm/dd/yy', new Date(obj.aData[2])));
+					}
+				}
+			]
+		} );
+		
+		
+    j$("#eventTable tbody").click(function(event) {
+        j$(eventTable.fnSettings().aoData).each(function (){
+            j$(this.nTr).removeClass('row_selected');
+        });
+        j$(event.target.parentNode).addClass('row_selected');
+        
+        // now fill the attendee table
+        var eventId = eventTable.fnGetData( event.target.parentNode )[0];
+ console.log(eventId);
+
+          Eventbrite({'app_key': API_KEY, 'user_key':j$('#user_key').val()}, function(eb_client){
+            var params = {
+            	'id': eventId,
+            	'page': 1,
+            	'do_not_display': "profile"
+            };
+            // make a client request, provide a callback that will handle the response data
+            eb_client.event_list_attendees( params, function(response){
+
+
+				// check for success
+
+				// load events
+				attendeeTable.fnClearTable();
+				console.log(response);
+				j$.each(response.attendees, function() {
+					var a = this.attendee;
+					attendeeTable.fnAddData([a.first_name, a.last_name, a.email]);
+				});
+            	
+            });
+        });
+    });
+      		
+		attendeeTable = j$('#attendeeTable').dataTable( {
+			"bJQueryUI": true,
+			"bLengthChange": false,
+			"bPaginate": false,
+			"aoColumns": [
+				{ "sTitle": "First Name", "sWidth": '120px' },
+				{ "sTitle": "Last Name", "sWidth": '120px' },
+				{ "sTitle": "Email", "sWidth": '200px' }
+			]
+		} );
+		
+		var campaignData = [];
+		console.log(campaignList);
+		j$.each(campaignList, function() {
+			campaignData.push([ this.Id, this.Name, this.StartDate ]);
+		});
+		campaignTable = j$('#campaignTable').dataTable( {
+			"aaData": campaignData,
+			"bJQueryUI": true,
+			"bLengthChange": false,
+			"bPaginate": false,
+			"aoColumns": [
+				{ "sTitle": "Id", "bVisible": false },
+				{ "sTitle": "Campaign Name", "sWidth": '250px' },
+				{ "sTitle": "Start Date", "sWidth": '120px' }
+			]
+		} );
+
+		resultTable = j$('#resultTable').dataTable( {
+			"bJQueryUI": true,
+			"bLengthChange": false,
+			"bPaginate": false,
+			"aoColumns": [
+				{ "sTitle": "Full Name", "sWidth": '200px' },
+				{ "sTitle": "Details", "sWidth": '400px' }
+			]
+		} );
+
+		j$( "#import" ).button().click( function() {
+			GW_CTRL_EventbriteConnect.importAttendees(
+				null, // eventJson
+				[], // attendeeJson
+				null, // campaignId
+				null, // campaignName
+				null, // leadSource
+				false, // createLeads
+				false, // createOpps
+				function(result, event) {
+					console.log(result);
+				}, 
+				{escape:true}
+			);
+		
+		});
+      
+		j$( "#authenticate" ).button().click( function() {
+
+          Eventbrite({'app_key': API_KEY, 'user_key':j$('#user_key').val()}, function(eb_client){
+            var params = {
+            	'do_not_display': "venue,logo,style,organizer",
+            	'asc_or_desc': "desc"
+            };
+            // make a client request, provide a callback that will handle the response data
+            eb_client.user_list_events( params, function(response){
+
+
+				// check for success
+
+				// load events
+				eventTable.fnClearTable();
+				j$.each(response.events, function() {
+					var e = this.event;
+					eventTable.fnAddData([e.id, e.title, e.start_date]);
+				});
+				j$( "#ebMain" ).accordion( "activate" , 1 );
+            });
+          });
+      });
+
+		j$( "#step3" ).button().click( function() {
+			j$( "#ebMain" ).accordion( "activate" , 2 );		
+		});
+		j$( "#step4" ).button().click( function() {
+			j$( "#ebMain" ).accordion( "activate" , 3 );		
+		});
+        j$( "#campaignSection" ).accordion( { autoHeight: false });  
+        j$( "#ebMain" ).accordion( { autoHeight: false });  
+
+		
+  });
+  
+  /* Get the rows which are currently selected */
+  // not using this right now but thought it might be useful -ec
+	function fnGetSelected( oTableLocal )
+	{
+	    var aReturn = new Array();
+	    var aTrs = oTableLocal.fnGetNodes();
+	     
+	    for ( var i=0 ; i<aTrs.length ; i++ )
+	    {
+	        if ( j$(aTrs[i]).hasClass('row_selected') )
+	        {
+	            aReturn.push( aTrs[i] );
+	        }
+	    }
+	    return aReturn;
+	}
+  
+</script>
+</apex:form>
+</apex:page>
