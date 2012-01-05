@@ -1,9 +1,36 @@
 public with sharing class EventbriteConnectController {
 /*-----------------------------------------------------------------------------------------------
-* Written by Evan Callahan, copyright (c) 2012 Groundwire
-* This program is released under the GNU Affero General Public License. http://www.gnu.org/licenses/
-*
 * Visualforce controller class for Eventbrite for Salesforce 
+* Written by Evan Callahan
+
+      Copyright (c) 2012, Groundwire Consulting, Inc.
+      All rights reserved.
+
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+
+      * Redistributions of source code must retain the above copyright
+         notice, this list of conditions and the following disclaimer.
+      * Redistributions in binary form must reproduce the above copyright
+         notice, this list of conditions and the following disclaimer in the
+         documentation and/or other materials provided with the distribution.
+      * Neither the name of Groundwire Consulting, Inc. nor the names of
+         its contributors may be used to endorse or promote products derived
+         from this software without specific prior written permission.
+
+      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+      "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+      LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+      FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+      COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+      INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+      BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+      LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+      CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+      LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+      ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+      POSSIBILITY OF SUCH DAMAGE.
+      
 *-----------------------------------------------------------------------------------------------*/
 	
 	public string settingsJson { get; private set; }
@@ -140,17 +167,26 @@ public with sharing class EventbriteConnectController {
 
 		// deserialize settings
 		JSONParser parser = JSON.createParser( settingsJson );
-		Type classType = Type.forName('Eventbrite_Connector_Settings__c'); 
-		Eventbrite_Connector_Settings__c settings = (Eventbrite_Connector_Settings__c)parser.readValueAs(classType);
-				
+		Eventbrite_Connector_Settings__c settings = (Eventbrite_Connector_Settings__c)parser.readValueAs(Eventbrite_Connector_Settings__c.class);
+
+		// not working with managed package		
+		//Type classType = Type.forName('Eventbrite_Connector_Settings__c'); 
+		//Eventbrite_Connector_Settings__c settings = (Eventbrite_Connector_Settings__c)parser.readValueAs(classType);
+		
 		// get the set of contact emails and order Ids in the attendee list
 		set<string> attendeeEmails = new set<string>();
 		set<string> orderIds = new set<string>();
 		map<string, Eventbrite.Attendee> companyNameMap = new map<string, Eventbrite.Attendee>();
+		map<string, string> ticketNameMap = new map<string, string>(); 
 
 		// parse json
 		Eventbrite eb = new Eventbrite();
 		Eventbrite.Event ebEvent = eb.parseEvent( eventJson );
+		
+		// get ticket type names
+		for (Eventbrite.Ticket tkt : ebEvent.tickets) {
+			ticketNameMap.put(tkt.id, tkt.name);
+		}
 		
 		// parse attendee records
 		list<Eventbrite.Attendee> ebaList = new list<Eventbrite.Attendee>();
@@ -159,7 +195,7 @@ public with sharing class EventbriteConnectController {
 			ebaList.add(eba);
 			if (settings.use_existing_contact__c && eba.email != null) 
 				attendeeEmails.add( eba.email );
-			if (eba.order_id != null) 
+			if (eba.order_id != null)
 				orderIds.add( eba.order_id );
 			if (eba.company != null) 
 				companyNameMap.put( eba.company, eba );
@@ -230,13 +266,13 @@ public with sharing class EventbriteConnectController {
 				}
 			}
 		}
-				
+
 		// map the existing campaign members from the affected campaign by contactid or leadid
 		map<id, CampaignMember> memberMap = new map<id, CampaignMember>(); 
 		if (campaignId != null) {
 			for (campaignMember cm : 
 				[select id, campaignId, leadId, contactId, status, eventbrite_barcodes__c, Eventbrite_Checkins__c, 
-					eventbrite_ticket_quantity__c from campaignMember 
+					eventbrite_ticket_type__c, eventbrite_ticket_quantity__c from campaignMember 
 					where campaignId = : campaignId and contactId in : contactMatches]) {
 						
 				memberMap.put((cm.contactId == null) ? cm.leadId : cm.contactId, cm);
@@ -251,7 +287,7 @@ public with sharing class EventbriteConnectController {
 		map<string, Opportunity> orderOppMap = new map<string, Opportunity>(); 
 		if (settings.Option_for_Leads_or_Contacts__c == 2) {
 			for (opportunity o : [select id, amount, name, stagename, closedate, campaignId, eventbrite_order_id__c,
-					Eventbrite_Answers__c, Eventbrite_Attendee_IDs__c, Eventbrite_Ticket_Quantity__c 
+					Eventbrite_Answers__c, Eventbrite_Attendee_IDs__c, Eventbrite_Ticket_Quantity__c, Eventbrite_Ticket_Type__c 
 					from opportunity where Eventbrite_Order_Id__c in : orderIds])
 				orderOppMap.put(o.eventbrite_order_id__c, o);
 		}
@@ -441,6 +477,12 @@ public with sharing class EventbriteConnectController {
 		 		}
 			 	cm.status = settings.Campaign_Member_Status__c;
 			 	
+			 	// set the ticket type
+			 	string ticketName = ticketNameMap.get(eba.ticket_id);
+			 	cm.Eventbrite_Ticket_Type__c = (cm.Eventbrite_Ticket_Type__c == null || cm.Eventbrite_Ticket_Type__c == ticketName) ?
+			 		ticketName : 'Multiple Types';
+			 	cm.Event_Date_and_Time__c = eba.event_date;
+			 	
 			 	// check for barcodeId(s) and total qty and update them
 			 	set<string> barcodes = new set<string>();
 				set<string> checkins = new set<string>();
@@ -453,7 +495,8 @@ public with sharing class EventbriteConnectController {
 			 	if (eba.barcodes != null) {
 			 		for (Eventbrite.Barcode ebc : eba.barcodes) {
 						if (!barcodes.contains(ebc.id)) {	
-							cm.eventbrite_barcodes__c += ';' + ebc.id; 		 			
+							cm.eventbrite_barcodes__c = (cm.eventbrite_barcodes__c == null) ?
+								ebc.id : (cm.eventbrite_barcodes__c + ';' + ebc.id); 		 			
 			 				barcodes.add(ebc.id);
 
 			 				// for new barcodes, increment the ticket quantity
@@ -463,7 +506,8 @@ public with sharing class EventbriteConnectController {
 			 					cm.Eventbrite_Ticket_Quantity__c += 1;
 						}
 						if (ebc.status == 'used' && !checkins.contains(ebc.id)) {	
-							cm.eventbrite_checkins__c += ';' + ebc.id; 		 			
+							cm.eventbrite_checkins__c = (cm.eventbrite_checkins__c == null) ?
+								ebc.id : (cm.eventbrite_checkins__c + ';' + ebc.id); 		 			
 			 				barcodes.add(ebc.id);
 
 							// for new checkins, increment the attendees
@@ -476,7 +520,8 @@ public with sharing class EventbriteConnectController {
 			 	} else if (eba.barcode != null) {     // this can be deprecated once we are getting barcode details
 			 		for (string bc : eba.barcode) {
 						if (!barcodes.contains(bc)) {	
-							cm.eventbrite_barcodes__c += ';' + bc; 		 			
+							cm.eventbrite_barcodes__c = (cm.eventbrite_barcodes__c == null) ?
+								bc : (cm.eventbrite_barcodes__c + ';' + bc); 		 			
 			 				barcodes.add(bc);
 			 				// for new barcodes, add the ticket quantity to the total
 			 				if (cm.Eventbrite_Ticket_Quantity__c == null) cm.Eventbrite_Ticket_Quantity__c = 0;
@@ -489,7 +534,7 @@ public with sharing class EventbriteConnectController {
 			 	
 				// fill text field for answers - consider when there are answers for multiple attendees in one CM
 				if (eba.answers != null) {
-					string ansText = '[Attendee #' + eba.id + ']\n';
+					string ansText = '\n';  // '[Attendee #' + eba.id + ']\n';
 					if (cm.Eventbrite_Answers__c == null || !cm.Eventbrite_Answers__c.contains(ansText)) {
 						for (Eventbrite.Answer ea : eba.answers) {
 							ansText += ea.question + '  ' + ea.answer_text + '\n';
@@ -570,6 +615,11 @@ public with sharing class EventbriteConnectController {
 					}				
 				}
 
+			 	// set the ticket type
+			 	string ticketName = ticketNameMap.get(eba.ticket_id);
+			 	o.Eventbrite_Ticket_Type__c = (o.Eventbrite_Ticket_Type__c == null || o.Eventbrite_Ticket_Type__c == ticketName) ?
+			 		ticketName : 'Multiple Types';
+				
 				if (o.campaignId == null) o.campaignId = campaignId;
 				o.eventbrite_ticket_id__c = eba.ticket_id;
 				o.eventbrite_event_id__c = ebEvent.id;
@@ -741,7 +791,7 @@ public with sharing class EventbriteConnectController {
 
 		string oneEvent = '{"box_header_text_color": "005580", "link_color": "EE6600", "box_background_color": "FFFFFF", "timezone": "US/Pacific", "box_border_color": "D5D5D3", "logo": "http://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "organizer": {"url": "http://www.eventbrite.com/org/515399719", "description": "", "id": 515399719, "name": ""}, "background_color": "FFFFFF", "id": 586701841, "category": "", "box_header_background_color": "EFEFEF", "capacity": 5000, "num_attendee_rows": 5, "title": "Test Free Event", "start_date": "2011-02-16 13:00:00", "status": "Completed", "description": "", "end_date": "2011-02-16 16:00:00", "tags": "", "text_color": "005580", "title_text_color": "", "tickets": [{"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "0.00", "quantity_sold": 7, "visible": "true", "currency": "USD", "quantity_available": 20, "type": 0, "id": 9196395, "name": "Free Ticket"}}, {"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "50.00", "quantity_sold": 0, "visible": "true", "currency": "USD", "quantity_available": 100, "type": 0, "id": 9960065, "name": "Ticket plus Donation"}}], "created": "2010-02-24 10:55:06", "url": "http://www.eventbrite.com/event/586701841", "box_text_color": "000000", "privacy": "Public", "venue": {"city": "Seattle", "name": "Groundwire", "country": "United States", "region": "WA", "longitude": -122.336787, "postal_code": "98101", "address_2": "", "address": "1402 3rd Ave", "latitude": 47.609093000000001, "country_code": "US", "id": 422693, "Lat-Long": "47.609093 / -122.336787"}, "modified": "2011-02-16 20:30:34", "logo_ssl": "https://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "repeats": "no"}';
 		string oneAttendee = '{"last_name": "CallahanTEST", "answers": [{"answer": {"answer_text": "it is so deep", "question": "In your own words, please describe the link between love and loss.", "question_type": "text", "question_id": 1719139}}], "home_address": "", "suffix": "", "home_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348011, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "206-123-4567", "event_date": "", "email": "evan+bobtest@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "", "order_id": 13070182, "company": "Groundwire ConsultingTEST", "barcode": "1307018217348011001,1307018217348011002", "home_region": "WA", "discount": "", "amount_paid": "1.11", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 2}';
-		string settingsJson = '{"attributes":{"type":"Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","Create_Accounts__c":true,"API_User_Key__c":"12664528613477948638","Username__c":"","Password__c":"","Campaign_Type_for_New_Campaigns__c":"Conference","Campaign_Member_Status__c":"Sent","Lead_Source__c":"Phone Inquiry","Opp_Contact_Role__c":"Other","Option_for_Campaign__c":0,"Option_for_Leads_or_Contacts__c":2,"Overwrite_Contact_Detail__c":true}';
+		string settingsJson = '{"attributes":{"type":"gweb__Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/gweb__Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","gweb__Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","gweb__Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","gweb__Create_Accounts__c":true,"gweb__API_User_Key__c":"12664528613477948638","gweb__Username__c":"","gweb__Password__c":"","gweb__Campaign_Type_for_New_Campaigns__c":"Conference","gweb__Campaign_Member_Status__c":"Sent","gweb__Lead_Source__c":"Phone Inquiry","gweb__Opp_Contact_Role__c":"Other","gweb__Option_for_Campaign__c":0,"gweb__Option_for_Leads_or_Contacts__c":2,"gweb__Overwrite_Contact_Detail__c":true}';
 
 		string contactLabel = Describe.getObjectLabel('Contact').toLowerCase();
 		string leadLabel = Describe.getObjectLabel('Lead').toLowerCase();
@@ -759,11 +809,12 @@ public with sharing class EventbriteConnectController {
 		system.assertEquals('Sent', cm[0].status);
 		system.assert(cm[0].eventbrite_answers__c.contains('In your own words'));
 		
-		list<opportunity> oo = [select id, name, campaignId, amount, eventbrite_answers__c from opportunity where campaignId =: ccr.campaignId];
+		list<opportunity> oo = [select id, name, campaignId, amount, eventbrite_answers__c, eventbrite_ticket_type__c from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(1, oo.size());
 		system.assertEquals('Bob CallahanTEST Eventbrite Order - Test Free Event', oo[0].name);
 		system.assertEquals(1.11, oo[0].amount);
 		system.assert(oo[0].eventbrite_answers__c.contains('In your own words'));
+		system.assertEquals('Free Ticket', oo[0].eventbrite_ticket_type__c);
 		
 		list<opportunitycontactrole> ocr = [select id, contactId, role from opportunitycontactrole where opportunityId =: oo[0].id];
 		system.assertEquals(cm[0].contactid, ocr[0].contactid);
@@ -782,7 +833,7 @@ public with sharing class EventbriteConnectController {
 			// another person, zero dollars
 			'{"last_name": "FosterTEST", "work_address": "123 4th", "suffix": "", "work_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348014, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "work_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "ryan+bob@groundwire.org", "job_title": "", "website": "", "work_country_code": "US", "work_city": "Seattle", "order_id": 13070185, "company": "GroundwireTEST", "barcode": "1307018217348011006", "work_region": "WA", "discount": "", "amount_paid": "0.00", "work_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "2010-06-28", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 1}'
 		};
-		settingsJson = '{"attributes":{"type":"Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","Create_Accounts__c":true,"API_User_Key__c":"12664528613477948638","Username__c":"","Password__c":"","Campaign_Type_for_New_Campaigns__c":"Conference","Campaign_Member_Status__c":"Responded","Lead_Source__c":"Phone Inquiry","Opp_Contact_Role__c":"Other","Option_for_Campaign__c":0,"Option_for_Leads_or_Contacts__c":2,"Overwrite_Contact_Detail__c":true}';
+		settingsJson = '{"attributes":{"type":"gweb__Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/gweb__Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","gweb__Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","gweb__Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","gweb__Create_Accounts__c":true,"gweb__API_User_Key__c":"12664528613477948638","gweb__Username__c":"","gweb__Password__c":"","gweb__Campaign_Type_for_New_Campaigns__c":"Conference","gweb__Campaign_Member_Status__c":"Responded","gweb__Lead_Source__c":"Phone Inquiry","gweb__Opp_Contact_Role__c":"Other","gweb__Option_for_Campaign__c":0,"gweb__Option_for_Leads_or_Contacts__c":2,"gweb__Overwrite_Contact_Detail__c":true}';
 		
 		result = 
 			EventbriteConnectController.importAttendees(oneEvent, attendees, settingsJson, ccr.CampaignId, 'Created from Eventbrite Event' );
@@ -824,7 +875,7 @@ public with sharing class EventbriteConnectController {
 			'{"last_name": "CallahanTEST", "home_address": "", "suffix": "", "home_postal_code": "98236", "currency": "USD", "prefix": "", "id": 17348011, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "evan+bobtest@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "", "order_id": 13070182, "company": "", "barcode": "1307018217348011001,1307018217348011002", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "", "cell_phone": "765.4848x89", "notes": "", "quantity": 2}',
 			'{"last_name": "MagnusonTEST", "home_address": "123 4th", "suffix": "", "home_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348012, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "#1234", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "eric+bob@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "Seattle", "order_id": 13070182, "company": "", "barcode": "1307018217348011003", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "2010-06-28", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 1}'
 		};
-		string settingsJson = '{"attributes":{"type":"Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","Create_Accounts__c":true,"API_User_Key__c":"12664528613477948638","Username__c":"","Password__c":"","Campaign_Type_for_New_Campaigns__c":"Conference","Campaign_Member_Status__c":"Responded","Lead_Source__c":"Phone Inquiry","Opp_Contact_Role__c":"Economic Buyer","Option_for_Campaign__c":0,"Option_for_Leads_or_Contacts__c":0,"Overwrite_Contact_Detail__c":false}';
+		string settingsJson = '{"attributes":{"type":"gweb__Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/gweb__Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","gweb__Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","gweb__Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","gweb__Create_Accounts__c":true,"gweb__API_User_Key__c":"12664528613477948638","gweb__Username__c":"","gweb__Password__c":"","gweb__Campaign_Type_for_New_Campaigns__c":"Conference","gweb__Campaign_Member_Status__c":"Responded","gweb__Lead_Source__c":"Phone Inquiry","gweb__Opp_Contact_Role__c":"Economic Buyer","gweb__Option_for_Campaign__c":0,"gweb__Option_for_Leads_or_Contacts__c":0,"gweb__Overwrite_Contact_Detail__c":false}';
 		
 		string leadLabel = Describe.getObjectLabel('Lead').toLowerCase();
 
@@ -859,7 +910,7 @@ public with sharing class EventbriteConnectController {
 			'{"last_name": "CallahanTEST", "home_address": "123 5th", "suffix": "", "home_postal_code": "98236", "currency": "USD", "prefix": "", "id": 17348011, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "evan+bobtest@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "", "order_id": 13070182, "company": "", "barcode": "1307018217348011001,1307018217348011002", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "", "cell_phone": "765.4848x89", "notes": "", "quantity": 2}',
 			'{"last_name": "MagnusonTEST", "home_address": "123 4th", "suffix": "", "home_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348012, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "#1234", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "eric+bob@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "Seattle", "order_id": 13070182, "company": "", "barcodes": [{"barcode": {"status": "unused", "date_modified": "2011-12-28 21:53:20", "checkin_type": 0, "checkin_method": null, "attendee_id": 17348012, "date_created": "2011-12-29 05:53:20", "id": "1307018217348011003", "device_id": null}},{"barcode": {"status": "used", "date_modified": "2011-12-28 21:53:20", "checkin_type": 0, "checkin_method": null, "attendee_id": 17348013, "date_created": "2011-12-29 05:53:20", "id": "1307018217348011004", "device_id": null}}], "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "2010-06-28", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 2}'
 		};
-		string settingsJson = '{"attributes":{"type":"Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","Create_Accounts__c":true,"API_User_Key__c":"12664528613477948638","Username__c":"","Password__c":"","Campaign_Type_for_New_Campaigns__c":"Conference","Campaign_Member_Status__c":"Responded","Lead_Source__c":"Phone Inquiry","Opp_Contact_Role__c":"Economic Buyer","Option_for_Campaign__c":0,"Option_for_Leads_or_Contacts__c":0,"Overwrite_Contact_Detail__c":false}';
+		string settingsJson = '{"attributes":{"type":"gweb__Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/gweb__Eventbrite_connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","gweb__Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","gweb__Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","gweb__Create_Accounts__c":true,"gweb__API_User_Key__c":"12664528613477948638","gweb__Username__c":"","gweb__Password__c":"","gweb__Campaign_Type_for_New_Campaigns__c":"Conference","gweb__Campaign_Member_Status__c":"Responded","gweb__Lead_Source__c":"Phone Inquiry","gweb__Opp_Contact_Role__c":"Economic Buyer","gweb__Option_for_Campaign__c":0,"gweb__Option_for_Leads_or_Contacts__c":0,"gweb__Overwrite_Contact_Detail__c":false}';
 		
 		string contactLabel = Describe.getObjectLabel('Contact').toLowerCase();
 		string leadLabel = Describe.getObjectLabel('Lead').toLowerCase();
@@ -890,7 +941,7 @@ public with sharing class EventbriteConnectController {
 	static testmethod void testEBerror() {		
 		string oneEvent = '{"box_header_text_color": "005580", "link_color": "EE6600", "box_background_color": "FFFFFF", "timezone": "US/Pacific", "box_border_color": "D5D5D3", "logo": "http://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "organizer": {"url": "http://www.eventbrite.com/org/515399719", "description": "", "id": 515399719, "name": ""}, "background_color": "FFFFFF", "id": 586701841, "category": "", "box_header_background_color": "EFEFEF", "capacity": 5000, "num_attendee_rows": 5, "title": "Test Free Event", "start_date": "2011-02-16 13:00:00", "status": "Completed", "description": "", "end_date": "2011-02-16 16:00:00", "tags": "", "text_color": "005580", "title_text_color": "", "tickets": [{"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "0.00", "quantity_sold": 7, "visible": "true", "currency": "USD", "quantity_available": 20, "type": 0, "id": 9196395, "name": "Free Ticket"}}, {"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "50.00", "quantity_sold": 0, "visible": "true", "currency": "USD", "quantity_available": 100, "type": 0, "id": 9960065, "name": "Ticket plus Donation"}}], "created": "2010-02-24 10:55:06", "url": "http://www.eventbrite.com/event/586701841", "box_text_color": "000000", "privacy": "Public", "venue": {"city": "Seattle", "name": "Groundwire", "country": "United States", "region": "WA", "longitude": -122.336787, "postal_code": "98101", "address_2": "", "address": "1402 3rd Ave", "latitude": 47.609093000000001, "country_code": "US", "id": 422693, "Lat-Long": "47.609093 / -122.336787"}, "modified": "2011-02-16 20:30:34", "logo_ssl": "https://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "repeats": "no"}';
 		string oneAttendee = '{"last_name": "", "home_address": "", "suffix": "", "home_postal_code": "98115", "currency": "BRITISH POUND", "prefix": "", "id": 17348011, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "BOGUS", "job_title": "", "website": "", "home_country_code": "US", "home_city": "", "order_id": 13070182, "company": "", "barcode": "1307018217348011001,1307018217348011002", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "", "cell_phone": "765.4848x89", "notes": "", "quantity": 2.2}';
-		string settingsJson = '{"attributes":{"type":"Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/Eventbrite_Connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","Create_Accounts__c":true,"API_User_Key__c":"12664528613477948638","Username__c":"","Password__c":"","Campaign_Type_for_New_Campaigns__c":"Conference","Campaign_Member_Status__c":"Responded","Lead_Source__c":"Phone Inquiry","Opp_Contact_Role__c":"Economic Buyer","Option_for_Campaign__c":0,"Option_for_Leads_or_Contacts__c":2,"Overwrite_Contact_Detail__c":false}';
+		string settingsJson = '{"attributes":{"type":"gweb__Eventbrite_Connector_Settings__c","url":"/services/data/v23.0/sobjects/gweb__Eventbrite_connector_Settings__c/a00U0000001zLU3IAM"},"Name":"Eventbrite Connector Settings (User)","SetupOwnerId":"005U0000000Zvj3IAC","gweb__Opp_Stage__c":"Closed Won","LastModifiedById":"005U0000000Zvj3IAC","SystemModstamp":"2011-11-30T22:02:41.000+0000","CreatedById":"005U0000000Zvj3IAC","gweb__Use_Existing_Contact__c":true,"CreatedDate":"2011-11-30T22:02:41.000+0000","LastModifiedDate":"2011-11-30T22:02:41.000+0000","IsDeleted":false,"Id":"a00U0000001zLU3IAM","gweb__Create_Accounts__c":true,"gweb__API_User_Key__c":"12664528613477948638","gweb__Username__c":"","gweb__Password__c":"","gweb__Campaign_Type_for_New_Campaigns__c":"Conference","gweb__Campaign_Member_Status__c":"Responded","gweb__Lead_Source__c":"Phone Inquiry","gweb__Opp_Contact_Role__c":"Economic Buyer","gweb__Option_for_Campaign__c":0,"gweb__Option_for_Leads_or_Contacts__c":2,"gweb__Overwrite_Contact_Detail__c":false}';
 		
 		string contactLabel = Describe.getObjectLabel('Contact').toLowerCase();
 
