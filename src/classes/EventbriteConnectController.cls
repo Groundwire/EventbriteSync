@@ -1,4 +1,4 @@
-public with sharing class EventbriteConnectController {
+global with sharing class EventbriteConnectController {
 /*-----------------------------------------------------------------------------------------------
 * Visualforce controller class for Eventbrite for Salesforce 
 * Written by Evan Callahan
@@ -105,18 +105,18 @@ public with sharing class EventbriteConnectController {
 	}
 	
 	@RemoteAction
-	public static list<campaign> getCampaignList( integer maxRecords ) {
+	global static list<campaign> getCampaignList( integer maxRecords ) {
 		return [select id, name, startdate, lastmodifieddate, type, status, isactive
 				from campaign order by lastmodifieddate desc limit : maxRecords];
 	}
 	
-	public class CreateCampaignResult {
+	global class CreateCampaignResult {
 		public string campaignId;
 		public list<string> campaignMemberStatuses;
 	}
 	
 	@RemoteAction
-	public static CreateCampaignResult createCampaign( string campaignName, string recordTypeId, 
+	global static CreateCampaignResult createCampaign( string campaignName, string recordTypeId, 
 		string campaignType, date startDate, date endDate, string status, string parentCampaignId ) {
 		
 		Eventbrite_Connector_Settings__c settings = Eventbrite_Connector_Settings__c.getInstance( UserInfo.getUserId() );
@@ -152,7 +152,7 @@ public with sharing class EventbriteConnectController {
 		return ccr;
 	}
 
-	public class ImportAttendeeResult {
+	global class ImportAttendeeResult {
 		string summary;
 		string firstname;
 		string lastname;
@@ -164,7 +164,7 @@ public with sharing class EventbriteConnectController {
 
 	// remote method that the connector page calls to do the import
 	@RemoteAction
-	public static list<ImportAttendeeResult> importAttendees(
+	global static list<ImportAttendeeResult> importAttendees(
 		string eventJson, list<string> attendeeJson, string campaignId, string contactDescription,
   		string Username, string Password, string apiUserKey, integer OptionForLeadsOrContacts, 
   		boolean UseExistingContact, boolean OverwriteContactDetail,	string LeadSource, boolean CreateAccounts, 
@@ -768,7 +768,7 @@ public with sharing class EventbriteConnectController {
 	}
 
 	@RemoteAction
-	public static list<string> getCampaignMemberStatuses(string sCampaignId) {
+	global static list<string> getCampaignMemberStatuses(string sCampaignId) {
 		return Describe.getCampaignMemberStatuses(sCampaignId);
 	}
 	
