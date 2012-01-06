@@ -2,6 +2,14 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>Event_Date_and_Time__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Date and time of the Eventbrite event.</inlineHelpText>
+        <label>Event Date and Time</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
         <fullName>Eventbrite_Answers__c</fullName>
         <externalId>false</externalId>
         <label>Eventbrite Answers</label>
@@ -45,6 +53,16 @@
         <required>false</required>
         <scale>0</scale>
         <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Ticket_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Type of Eventbrite ticket(s) ordered by this attendee.</inlineHelpText>
+        <label>Eventbrite Ticket Type</label>
+        <length>255</length>
+        <required>false</required>
+        <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>

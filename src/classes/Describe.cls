@@ -1,4 +1,4 @@
-public class Describe {
+public with sharing class Describe {
 /*-----------------------------------------------------------------------------------------------
   Wrapper class for object and field description data 
 
@@ -263,6 +263,23 @@ public class Describe {
 		Schema.DescribeFieldResult dfr = fieldDescribes.get(objectName).get(fieldName);
 		return dfr.getLabel();
 	}		
+
+	/*******************************************************************************************************
+	* @description Gives member statuses for a campaign 
+	* @param cid Id of the campaign to look up
+	* @return List of status names 
+	*/ 
+	public static list<string> getCampaignMemberStatuses(id cid) {
+		list<string> memberStatuses = new list<string>();
+		
+		for (campaignMemberStatus cm : [select Label from CampaignMemberStatus 
+			where campaignId =: cid order by SortOrder]) { 
+			
+			memberStatuses.add(cm.Label);
+		}
+		
+		return (memberStatuses.isEmpty() ? null : memberStatuses);
+	}
 
 	// TEST
 	static testmethod void testDescribe() {

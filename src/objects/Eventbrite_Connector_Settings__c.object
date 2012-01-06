@@ -75,10 +75,10 @@
         <unique>false</unique>
     </fields>
     <fields>
-        <fullName>Opp_Record_Type_Name__c</fullName>
+        <fullName>Opp_Record_Type_Id__c</fullName>
         <externalId>false</externalId>
-        <label>Opp Record Type Name</label>
-        <length>100</length>
+        <label>Opp Record Type Id</label>
+        <length>18</length>
         <required>false</required>
         <type>Text</type>
         <unique>false</unique>
@@ -140,13 +140,6 @@
         <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Use_Other_Home_Address_Fields__c</fullName>
-        <defaultValue>false</defaultValue>
-        <externalId>false</externalId>
-        <label>Use Other/Home Address Fields</label>
-        <type>Checkbox</type>
-    </fields>
-    <fields>
         <fullName>Username__c</fullName>
         <externalId>false</externalId>
         <label>Username</label>
@@ -155,5 +148,5 @@
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Eventbrite Connector Settings</label>
+    <label>Eventbrite Settings</label>
 </CustomObject>

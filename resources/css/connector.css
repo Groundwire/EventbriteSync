@@ -1,0 +1,247 @@
+#container {
+    display: none;
+    font-size: 96%;
+    margin: 10px auto;
+    width: 900px;
+}
+
+#container,
+#container h1,
+#container h2,
+#container h3,
+#container h4,
+#container h5,
+#container h6,
+#container label,
+#container td {
+    font-family: "Trebuchet MS",Tahoma,Verdana,Arial,sans-serif;
+}
+
+#container h3 {
+    font-size: 1.2em;
+}
+
+div.clear {
+    clear: both;
+}
+
+/* Grids */
+#events,
+#attendees,
+#campaigns,
+#results {
+    border: 1px solid #cccccc;
+    height: 300px;
+    width: 100%;
+}
+
+#events-wrapper {
+    float: left;
+    margin: 0 20px 0 0;
+    width: 200px;
+}
+
+#attendees-wrapper {
+    float: left;
+}
+
+#attendees-grid-wrapper,
+#campaigns-grid-wrapper,
+#results-grid-wrapper {
+    position: relative;
+    width: 635px;
+}
+
+#campaigns-grid-wrapper,
+#results-grid-wrapper {
+    width: 100%;
+}
+
+#campaigns {
+    clear: both;
+}
+
+.slick-cell {
+    border: 0 none transparent !important;
+	border-right: 1px solid silver !important;
+	border-bottom: 0 none transparent !important;
+}
+
+.slick-viewport .even .slick-cell {
+    background-color: white;
+}
+
+.slick-viewport .odd .slick-cell {
+    background-color: #f6f6f6;
+}
+
+.slick-viewport .odd .selected,
+.slick-viewport .even .selected {
+    background-color: #1696bf !important;
+    color: white;
+}
+
+.grid-search-wrapper {
+    margin: 10px 0;
+}
+
+/* Forms */
+label,
+span.form-label {
+    font-weight: bold;
+    margin-right: 0.75em;
+}
+
+.field-wrapper {
+    clear: left;
+    padding: 0.5em 0 1em;
+}
+
+.field-wrapper label,
+.field-wrapper span.form-label {
+    float: left;
+    width: 12em;
+}
+
+.field-wrapper table label {
+    float: none;
+    font-weight: normal;
+    width: auto;
+}
+
+input.text,
+.field-wrapper textarea {
+    padding: 0.25em 0.5em;
+}
+
+/* Buttons */
+.ui-buttonset {
+    margin: 1em 0;
+}
+
+/* Progress bar */
+.ui-progressbar {
+    height: 22px;
+}
+
+#importSection h3 {
+    background-image: url(images/pbar-ani.gif);
+    background-repeat: no-repeat;
+    background-position: -9999px -9999px;
+}
+
+.ui-progressbar-value {
+    background-image: url(images/pbar-ani.gif);
+}
+
+/* Tab controls */
+.tab-controls {
+    clear: both;
+}
+
+.tab-controls input {
+    float: right;
+}
+
+.tab-controls .button-status {
+    float: right;
+    margin: 0.5em 1em 0 1em;
+}
+
+/* Login tab */
+#login-inner {
+    margin: 0 auto;
+    width: 600px;
+}
+
+#login-email-password {
+    float: left;
+    width: 300px;
+}
+
+#login-userkey {
+    float: right;
+    width: 300px;
+}
+
+#do-login {
+    clear: both;
+}
+
+#authenticate,
+#remember-label {
+    float: right;
+}
+
+#email {
+    width: 15em;
+}
+
+#password {
+    width: 13.3em;
+}
+
+/* Events tab */
+#attendees {
+    background-image: url(images/grid-loading.gif);
+    background-repeat: no-repeat;
+    background-position: -9999px -9999px;
+}
+
+.no-close-button .ui-dialog-titlebar-close {
+    display: none;
+}
+
+.grid-loading .slick-viewport {
+    background-image: url(images/grid-loading.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.label-loading {
+    background: transparent url(images/grid-loading.gif) scroll no-repeat right center;
+    padding-right: 220px;
+}
+
+.hidden-select {
+    visibility: hidden;
+}
+
+/* Campaign tab */
+#campaign-name {
+    width: 25em;
+}
+
+#campaign-create-wrapper {
+    margin: -0.25em 0 0.5em;
+    float: right;
+    padding: 0;
+    position: relative;
+    z-index: 20;
+}
+
+#campaigns-grid-wrapper {
+    position: relative;
+    z-index: 10;
+}
+
+/* Import tab */
+#contact-description {
+    width: 400px;
+}
+
+/* Results tab */
+.summary-hover {
+    text-decoration: underline;
+}
+
+.summary-hover .ui-icon {
+    float: left;
+}
+
+/* IE7 Fixes */
+*+html #campaign-existing-wrapper,
+*+html #results-grid-wrapper {
+    float: left;
+    width: 857px;
+}

@@ -151,6 +151,17 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Eventbrite_Ticket_Type__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Type of Eventbrite ticket(s) ordered.</inlineHelpText>
+        <label>Eventbrite Ticket Type</label>
+        <length>255</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>LeadSource</fullName>
         <picklist>
             <picklistValues>
