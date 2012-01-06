@@ -167,7 +167,12 @@ Written by Matt Yoder and Evan Callahan
         </div>
         <div id="campaign-existing-wrapper" class="campaign-wrapper">
             <div class="field-wrapper" id="campaign-create-wrapper">
-                <input type="button" id="campaign-create" value="New {!CampaignLabel}" disabled="{!IF(canCreateCampaigns, '', 'disabled')}" title="{!IF(canCreateCampaigns, '', 'You do not have permission to create campaigns.')}" />
+            	<apex:outputPanel rendered="{!canCreateCampaigns}">
+                <input type="button" id="campaign-create" value="New {!CampaignLabel}" />
+                </apex:outputPanel>
+            	<apex:outputPanel rendered="{!NOT(canCreateCampaigns)}">
+				<input type="button" id="campaign-create" value="New {!CampaignLabel}" disabled="disabled" title="You do not have permission to create campaigns." />
+				</apex:outputPanel>
             </div>
             <div id="campaigns-grid-wrapper" class="grid-wrapper">
                 <div id="campaigns"></div>
