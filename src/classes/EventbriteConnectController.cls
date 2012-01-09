@@ -301,7 +301,7 @@ global with sharing class EventbriteConnectController {
 		map<string, Opportunity> orderOppMap = new map<string, Opportunity>(); 
 		if (settings.Option_for_Leads_or_Contacts__c == 2) {
 			for (opportunity o : [select id, amount, name, stagename, closedate, campaignId, eventbrite_order_id__c,
-					Eventbrite_Answers__c, Eventbrite_Attendee_IDs__c, Eventbrite_Ticket_Quantity__c, Eventbrite_Ticket_Type__c 
+					Eventbrite_Attendee_IDs__c, Eventbrite_Ticket_Quantity__c, Eventbrite_Ticket_Type__c 
 					from opportunity where Eventbrite_Order_Id__c in : orderIds])
 				orderOppMap.put(o.eventbrite_order_id__c, o);
 		}
@@ -538,7 +538,7 @@ global with sharing class EventbriteConnectController {
 			 	
 				// fill text field for answers - consider when there are answers for multiple attendees in one CM
 				if (eba.answers != null) {
-					string ansText = '\n';  // '[Attendee #' + eba.id + ']\n';
+					string ansText = '';
 					if (cm.Eventbrite_Answers__c == null || !cm.Eventbrite_Answers__c.contains(ansText)) {
 						for (Eventbrite.Answer ea : eba.answers) {
 							ansText += ea.question + '  ' + ea.answer_text + '\n';
@@ -633,19 +633,7 @@ global with sharing class EventbriteConnectController {
 					o.put('CurrencyIsoCode', eba.currency_code);
 				} catch (exception e) {}
 				if (eba.notes != null && o.description == null)
-					o.description = eba.notes;
-				
-				// fill text field for answers - consider when there are answers for multiple attendees in one order
-				if (eba.answers != null) {
-					string ansText = '[' + c.firstname + ' ' + c.lastname + ' - Attendee #' + eba.id + ']\n';
-					if (o.Eventbrite_Answers__c == null || !o.Eventbrite_Answers__c.contains(ansText)) {
-						for (Eventbrite.Answer ea : eba.answers) {
-							ansText += ea.question + '  ' + ea.answer_text + '\n';
-						}
-						o.Eventbrite_Answers__c = (o.Eventbrite_Answers__c == null) ? ansText :
-							 o.Eventbrite_Answers__c + '\n' + ansText;
-					}
-				}	
+					o.description = eba.notes;			
 		 	}
 		}
 
@@ -807,11 +795,10 @@ global with sharing class EventbriteConnectController {
 		system.assertEquals('Sent', cm[0].status);
 		system.assert(cm[0].eventbrite_answers__c.contains('In your own words'));
 		
-		list<opportunity> oo = [select id, name, campaignId, amount, eventbrite_answers__c, eventbrite_ticket_type__c from opportunity where campaignId =: ccr.campaignId];
+		list<opportunity> oo = [select id, name, campaignId, amount, eventbrite_ticket_type__c from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(1, oo.size());
 		system.assertEquals('Bob CallahanTEST Eventbrite Order - Test Free Event', oo[0].name);
 		system.assertEquals(1.11, oo[0].amount);
-		system.assert(oo[0].eventbrite_answers__c.contains('In your own words'));
 		system.assertEquals('Free Ticket', oo[0].eventbrite_ticket_type__c);
 		
 		list<opportunitycontactrole> ocr = [select id, contactId, role from opportunitycontactrole where opportunityId =: oo[0].id];
