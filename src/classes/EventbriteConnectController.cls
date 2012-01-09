@@ -485,7 +485,7 @@ global with sharing class EventbriteConnectController {
 			 	string ticketName = ticketNameMap.get(eba.ticket_id);
 			 	cm.Eventbrite_Ticket_Type__c = (cm.Eventbrite_Ticket_Type__c == null || cm.Eventbrite_Ticket_Type__c == ticketName) ?
 			 		ticketName : 'Multiple Types';
-			 	cm.Event_Date_and_Time__c = eba.event_date;
+			 	cm.Event_Date_and_Time__c = (eba.event_date != null) ? eba.event_date : ebEvent.start_date;
 			 	
 			 	// check for barcodeId(s) and total qty and update them
 			 	set<string> barcodes = new set<string>();
