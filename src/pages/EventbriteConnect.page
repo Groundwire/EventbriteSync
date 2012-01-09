@@ -84,11 +84,11 @@ Written by Matt Yoder and Evan Callahan
 
 <div id="ebMain" >
     <ul>
-        <li><a href="#login-section">Log In</a></li>
-        <li><a href="#eventSection">Select Event</a></li>
-        <li><a href="#campaignSection">Select {!CampaignLabel}</a></li>
-        <li><a href="#importSection">Import</a></li>
-        <li><a href="#resultsSection">Results</a></li>
+        <li><a href="#login-section">1. Log In</a></li>
+        <li><a href="#eventSection">2. Select Event</a></li>
+        <li><a href="#campaignSection">3. Select {!CampaignLabel}</a></li>
+        <li><a href="#importSection">4. Import</a></li>
+        <li><a href="#resultsSection">5. Results</a></li>
     </ul>
     <div id="login-section">
         <div id="login-inner">
