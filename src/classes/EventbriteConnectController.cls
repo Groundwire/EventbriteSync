@@ -655,7 +655,8 @@ global with sharing class EventbriteConnectController {
 					ocrsToInsert.add( new OpportunityContactRole( 
 						opportunityId = sr.getId(), 
 						contactId = con.id, 
-						role = settings.Opp_Contact_Role__c 
+						role = settings.Opp_Contact_Role__c,
+						isprimary = true 
 					));
 				}
 			}
