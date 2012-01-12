@@ -367,7 +367,7 @@ Written by Matt Yoder and Evan Callahan
     <div class="event-inner event-<%=status.toLowerCase()%>" title="<%=title%>">
         <h4><%=title%></h4>
         <div class="event-details">
-            <%=num_attendee_rows%>/<%=capacity%> Attendees
+            <%=num_attendee_rows%><% if (capacity > 0) { %>/<%=capacity%><% } %> Attendees
             -
             <% var edate = start_date.split(' ')[0].split('-'); %>
             <%=j$.datepicker.formatDate('mm/dd/yy', new Date(edate[0], edate[1] - 1, edate[2]))%>
