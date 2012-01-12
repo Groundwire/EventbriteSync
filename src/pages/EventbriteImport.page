@@ -364,7 +364,7 @@ Written by Matt Yoder and Evan Callahan
             <%=num_attendee_rows%>/<%=capacity%> Attendees
             -
             <% var edate = start_date.split(' ')[0].split('-'); %>
-            <%=j$.datepicker.formatDate('mm/dd/yy', new Date(edate[0], edate[1], edate[2]))%>
+            <%=j$.datepicker.formatDate('mm/dd/yy', new Date(edate[0], edate[1] - 1, edate[2]))%>
         </div>
     </div>
 </script>
