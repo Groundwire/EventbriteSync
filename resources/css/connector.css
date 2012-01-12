@@ -183,7 +183,39 @@ input.text,
 
 /* Events tab */
 #events .event-inner {
+    background: url("images/status-icons.png") no-repeat scroll 5px 7px transparent;
+    padding-left: 25px;
     position: relative;
+}
+
+#events .event-live {
+    background-position: 5px -45px;
+}
+
+#events .event-completed {
+    background-position: 5px -94px;
+}
+
+#events-status-key {
+    margin-top: 5px;
+}
+
+#events-status-key h5 {
+    display: block;
+}
+
+#events-status-key span {
+    background: url("images/status-icons.png") no-repeat scroll 0 3px transparent;
+    float: left;
+    padding: 3px  15px 3px 21px;
+}
+
+#events-status-key span.live {
+    background-position: 0 -49px;
+}
+
+#events-status-key span.completed {
+    background-position: 0 -97px;
 }
 
 #events .event-inner h4 {

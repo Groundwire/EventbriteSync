@@ -142,6 +142,12 @@ Written by Matt Yoder and Evan Callahan
                 </select>
             </p>
             <div id="events"></div>
+            <div id="events-status-key">
+                <h5>Eventbrite Status</h5>
+                <span class="live">Live</span>
+                <span class="completed">Completed</span>
+                <span class="canceled">Canceled</span>
+            </div>
         </div>
         <div id="attendees-wrapper">
             <h3>Select attendees to import</h3>
