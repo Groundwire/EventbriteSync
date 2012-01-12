@@ -1,4 +1,4 @@
-function EventbriteConnector($, settings, options) {
+function EventbriteImport($, settings, options) {
   // console.log(settings);
   var ebClient,
     /* DOM Elements */
@@ -76,7 +76,7 @@ function EventbriteConnector($, settings, options) {
           text: 'Create ' + options.labels.campaign,
           click: function() {
             if (validateCampaignInput()) {
-              gweb.EventbriteConnectController.createCampaign.apply(gweb.EventbriteConnectController, extractCampaignArguments(function(response, e) {
+              gweb.EventbriteImportController.createCampaign.apply(gweb.EventbriteImportController, extractCampaignArguments(function(response, e) {
                 if (handleSalesforceError(e)) {
                   // Put the member statuses in our campaign member status cache.
                   campaignMemberStatusCache[response.campaignId] = response.campaignMemberStatuses;
@@ -513,7 +513,7 @@ function EventbriteConnector($, settings, options) {
     if (campaignMemberStatusCache[campaignId] !== undefined) {
       populateCampaignMemberStatusList(campaignMemberStatusCache[campaignId]);
     } else {
-      gweb.EventbriteConnectController.getCampaignMemberStatuses(campaignId, function(result, e) {
+      gweb.EventbriteImportController.getCampaignMemberStatuses(campaignId, function(result, e) {
         if (handleSalesforceError(e)) {
           campaignMemberStatusCache[campaignId] = result;
           populateCampaignMemberStatusList(result);
@@ -708,7 +708,7 @@ function EventbriteConnector($, settings, options) {
   });
   campaignGrid.onSelectedRowsChanged.subscribe(updateSelectedCampaign);
   
-  gweb.EventbriteConnectController.getCampaignList(options.campaignBatch, function(result, e) {
+  gweb.EventbriteImportController.getCampaignList(options.campaignBatch, function(result, e) {
     if (handleSalesforceError(e)) {
       $.each(result, function() {
         this['id'] = this.Id;
@@ -826,7 +826,7 @@ function EventbriteConnector($, settings, options) {
       if (!importProgress.dialog('isOpen')) {
         return false;
       }
-      gweb.EventbriteConnectController.importAttendees.apply(gweb.EventbriteConnectController, getImportArgs(eventJSON, attendees, campaignId, contactDescriptionValue, function(result, e) {
+      gweb.EventbriteImportController.importAttendees.apply(gweb.EventbriteImportController, getImportArgs(eventJSON, attendees, campaignId, contactDescriptionValue, function(result, e) {
           if (handleSalesforceError(e)) {
             // Update the progress bar.
             importIndicator.progressbar('value', 100 * (i + 1) / numBatches);
