@@ -117,7 +117,8 @@ global with sharing class EventbriteImportController {
 	
 	@RemoteAction
 	global static CreateCampaignResult createCampaign( string campaignName, string recordTypeId, 
-		string campaignType, date startDate, date endDate, string status, string parentCampaignId ) {
+		string campaignType, date startDate, date endDate, string status, string parentCampaignId,
+		string description ) {
 		
 		Eventbrite_Connector_Settings__c settings = Eventbrite_Connector_Settings__c.getInstance( UserInfo.getUserId() );
 		CreateCampaignResult ccr = new CreateCampaignResult();
@@ -126,6 +127,7 @@ global with sharing class EventbriteImportController {
 			name = campaignName, 
 			startdate = startdate,
 			enddate = enddate,
+			description = description,
 			parentId = parentCampaignId,
 			isActive = true
 		);
@@ -766,9 +768,9 @@ global with sharing class EventbriteImportController {
 		system.assert(ebc.settingsJson != null);
 		
 		insert new campaign(name = 'test', isactive=true);
-		list<campaign> c = EventbriteImportController.getCampaignList(50);
+		list<campaign> c = eventbriteImportController.getCampaignList(50);
 		system.assert(!c.isEmpty());
-		CreateCampaignResult ccr = EventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null);
+		CreateCampaignResult ccr = eventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null, 'Every campaign needs description.');
 		list<string> cs = getCampaignMemberStatuses(ccr.campaignId);
 		system.assert(!cs.isEmpty());
 
@@ -853,8 +855,8 @@ global with sharing class EventbriteImportController {
 
 	static testmethod void testEBleads() {
 		insert new campaign(name = 'test', isactive=true);
-		list<campaign> c = EventbriteImportController.getCampaignList(50);
-		CreateCampaignResult ccr = EventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null);
+		list<campaign> c = eventbriteImportController.getCampaignList(50);
+		CreateCampaignResult ccr = eventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null, null);
 		list<string> cs = getCampaignMemberStatuses(ccr.campaignId);
 		
 		string oneEvent = '{"box_header_text_color": "005580", "link_color": "EE6600", "box_background_color": "FFFFFF", "timezone": "US/Pacific", "box_border_color": "D5D5D3", "logo": "http://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "organizer": {"url": "http://www.eventbrite.com/org/515399719", "description": "", "id": 515399719, "name": ""}, "background_color": "FFFFFF", "id": 586701841, "category": "", "box_header_background_color": "EFEFEF", "capacity": 5000, "num_attendee_rows": 5, "title": "Test Free Event", "start_date": "2011-02-16 13:00:00", "status": "Completed", "description": "", "end_date": "2011-02-16 16:00:00", "tags": "", "text_color": "005580", "title_text_color": "", "tickets": [{"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "0.00", "quantity_sold": 7, "visible": "true", "currency": "USD", "quantity_available": 20, "type": 0, "id": 9196395, "name": "Free Ticket"}}, {"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "50.00", "quantity_sold": 0, "visible": "true", "currency": "USD", "quantity_available": 100, "type": 0, "id": 9960065, "name": "Ticket plus Donation"}}], "created": "2010-02-24 10:55:06", "url": "http://www.eventbrite.com/event/586701841", "box_text_color": "000000", "privacy": "Public", "venue": {"city": "Seattle", "name": "Groundwire", "country": "United States", "region": "WA", "longitude": -122.336787, "postal_code": "98101", "address_2": "", "address": "1402 3rd Ave", "latitude": 47.609093000000001, "country_code": "US", "id": 422693, "Lat-Long": "47.609093 / -122.336787"}, "modified": "2011-02-16 20:30:34", "logo_ssl": "https://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "repeats": "no"}';
@@ -887,7 +889,7 @@ global with sharing class EventbriteImportController {
 	static testmethod void testEBLeadAndContact() {
 		insert new campaign(name = 'test', isactive=true);
 		list<campaign> c = EventbriteImportController.getCampaignList(50);
-		CreateCampaignResult ccr = EventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null);
+		CreateCampaignResult ccr = EventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null, null);
 		contact c1 = new contact(lastname='MagnusonTEST', email='eric+bob@groundwire.org');
 		insert c1;
 		contact c2 = new contact(lastname='Magna-SUN', email='eric+bob@groundwire.org');
