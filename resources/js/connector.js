@@ -145,8 +145,8 @@ function EventbriteImport($, settings, options) {
     campaignColumns = [
       {id:'Name', name:'Campaign Name', field:'Name', sortable:true, width: 465},
       {id:'Type', name:'Type', field:'Type', sortable:true, width: 150},
-      {id:'StartDate', name:'Start Date', field:'StartDate', formatter: dateFormatter, sortable:true, width: 110},
-      {id:'LastModifiedDate', name:'Modified Date', field:'LastModifiedDate', formatter: dateFormatter, sortable:true, width: 110}
+      {id:'StartDate', name:'Start Date', field:'StartDate', formatter: salesforeDateFormatter, sortable:true, width: 110},
+      {id:'LastModifiedDate', name:'Modified Date', field:'LastModifiedDate', formatter: salesforeDateFormatter, sortable:true, width: 110}
     ],
     campaignData = new Slick.Data.DataView(),
     campaignGrid = new Slick.Grid(campaignContainer, campaignData, campaignColumns, {
@@ -414,10 +414,15 @@ function EventbriteImport($, settings, options) {
     return true;
   };
   
-  function dateFormatter(row, cell, value, columnDef, dataContext) {
+  function salesforeDateFormatter(row, cell, value, columnDef, dataContext) {
     if (value) {
       return $.datepicker.formatDate('mm/dd/yy', new Date(value));
     }
+  };
+  
+  function formatEventbriteDate(dateString) {
+    var dateParts = dateString.split(' ')[0].split('-');
+    return $.datepicker.formatDate('mm/dd/yy', new Date(dateParts[0], dateParts[1] - 1, dateParts[2]));
   };
   
   function updateSelectedEvent() {
@@ -432,10 +437,10 @@ function EventbriteImport($, settings, options) {
       campaignNewName.val(selectedEvent.title);
       contactDescription.val('Imported from Eventbrite event "' + selectedEvent.title + '"');
       if (selectedEvent.start_date) {
-        campaignNewStart.val($.datepicker.formatDate('mm/dd/yy', new Date(selectedEvent.start_date.split(' ')[0])));
+        campaignNewStart.val(formatEventbriteDate(selectedEvent.start_date));
       }
       if (selectedEvent.end_date) {
-        campaignNewEnd.val($.datepicker.formatDate('mm/dd/yy', new Date(selectedEvent.end_date.split(' ')[0])));
+        campaignNewEnd.val(formatEventbriteDate(selectedEvent.end_date));
       }
       
       freeEvent = true;
