@@ -120,7 +120,7 @@ function EventbriteImport($, settings, options) {
     eventContainer = $("#events"),
     eventTemplate = tmpl('event_template'),
     eventColumns = [
-      {id:'events', name:'Events', field:'events', formatter:renderEvent, width: 200, minWidth: 200, maxWidth: 200}
+      {id:'events', name:'Events', field:'events', formatter:renderEvent, width: 276}
     ],
     eventData = new Slick.Data.DataView(),
     eventGrid = new Slick.Grid(eventContainer, eventData, eventColumns, {
@@ -134,9 +134,9 @@ function EventbriteImport($, settings, options) {
     }),
     attendeeColumns = [
       attendeeSelector.getColumnDefinition(),
-      {id:'first_name', name:'First Name', field:'first_name', sortable:true, width: 165},
-      {id:'last_name', name:'Last Name', field:'last_name', sortable:true, width: 165},
-      {id:'email', name:'Email', field:'email', width: 252}
+      {id:'first_name', name:'First Name', field:'first_name', sortable:true, width: 140},
+      {id:'last_name', name:'Last Name', field:'last_name', sortable:true, width: 140},
+      {id:'email', name:'Email', field:'email', width: 202}
     ],
     attendeeData = new Slick.Data.DataView(),
     attendeeGrid = new Slick.Grid(attendeeContainer, attendeeData, attendeeColumns, {}),

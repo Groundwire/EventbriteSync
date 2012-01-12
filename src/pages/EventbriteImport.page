@@ -358,7 +358,7 @@ Written by Matt Yoder and Evan Callahan
 </div>
 
 <script type="text/html" id="event_template">
-    <div class="event-inner event-<%=status.toLowerCase()%>">
+    <div class="event-inner event-<%=status.toLowerCase()%>" title="<%=title%>">
         <h4><%=title%></h4>
         <div class="event-details">
             <%=num_attendee_rows%>/<%=capacity%> Attendees

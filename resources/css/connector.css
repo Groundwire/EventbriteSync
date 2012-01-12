@@ -38,7 +38,7 @@ div.clear {
 #events-wrapper {
     float: left;
     margin: 0 20px 0 0;
-    width: 200px;
+    width: 300px;
 }
 
 #attendees-wrapper {
@@ -49,7 +49,7 @@ div.clear {
 #campaigns-grid-wrapper,
 #results-grid-wrapper {
     position: relative;
-    width: 635px;
+    width: 535px;
 }
 
 #campaigns-grid-wrapper,
@@ -182,6 +182,17 @@ input.text,
 }
 
 /* Events tab */
+#events .event-inner {
+    position: relative;
+}
+
+#events .event-inner h4 {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
 #attendees {
     background-image: url(images/grid-loading.gif);
     background-repeat: no-repeat;
