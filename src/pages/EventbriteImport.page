@@ -61,7 +61,7 @@ Written by Matt Yoder and Evan Callahan
     <script type="text/javascript">
         var j$ = jQuery.noConflict();
         j$(function() {
-            EventbriteConnector(j$, {!settingsJson}, {
+            EventbriteImport(j$, {!settingsJson}, {
                 apiKey: "ZJSQ55ARHB2OJPYAQ3",
                 campaignBatch: 100,
                 importBatch: 100,
