@@ -209,7 +209,7 @@ Written by Matt Yoder and Evan Callahan
         <div class="field-wrapper import-leads import-contacts import-contacts-opps">
             <span class="form-label">Prevent Duplicates</span>
             <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
-            Use existing <span class="import-type-text lower">{!LOWER(ContactLabel)}</span> where email matches.
+            Use existing {!LOWER(ContactLabel)} where email matches.
         </div>
         <div class="field-wrapper import-leads import-contacts import-contacts-opps">
             <label for="contact-description"><span class="import-type-text">{!ContactLabel}</span> Description</label>
