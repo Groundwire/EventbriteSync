@@ -26,3 +26,5 @@ src/objects/Case.object
 src/objects/CaseContactRole.object
 src/layouts
 src/remoteSiteSettings
+.settings
+.settings/com.salesforce.ide.core.prefs
