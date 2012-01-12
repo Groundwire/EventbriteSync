@@ -62,24 +62,6 @@
     </businessProcesses>
     <enableFeeds>true</enableFeeds>
     <fields>
-        <fullName>Event_Date_and_Time__c</fullName>
-        <externalId>false</externalId>
-        <label>Event Date and Time</label>
-        <required>false</required>
-        <trackFeedHistory>false</trackFeedHistory>
-        <type>DateTime</type>
-    </fields>
-    <fields>
-        <fullName>Eventbrite_Answers__c</fullName>
-        <externalId>false</externalId>
-        <inlineHelpText>Answers to custom questions asked during Eventbrite registration.</inlineHelpText>
-        <label>Eventbrite Answers</label>
-        <length>32768</length>
-        <trackFeedHistory>false</trackFeedHistory>
-        <type>LongTextArea</type>
-        <visibleLines>3</visibleLines>
-    </fields>
-    <fields>
         <fullName>Eventbrite_Attendee_IDs__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>One or more Eventbrite attendee ids for this campaign member, separated by semicolons.</inlineHelpText>
@@ -88,6 +70,14 @@
         <trackFeedHistory>false</trackFeedHistory>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Eventbrite_Date_and_Time__c</fullName>
+        <externalId>false</externalId>
+        <label>Eventbrite Date and Time</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>DateTime</type>
     </fields>
     <fields>
         <fullName>Eventbrite_Discount__c</fullName>
@@ -142,7 +132,7 @@
     <fields>
         <fullName>Eventbrite_Ticket_Quantity__c</fullName>
         <externalId>false</externalId>
-        <label>Ticket Quantity</label>
+        <label>Eventbrite Ticket Quantity</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>

@@ -35,10 +35,11 @@ Written by Matt Yoder and Evan Callahan
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/ui-lightness/jquery-ui-1.8.16.custom.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'slickgrid/slick.grid.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'slickgrid/controls/slick.pager.css')}" />
-    <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/connector.css')}" />
     <!-- 
-    <link rel="stylesheet" href="https://dl.dropbox.com/u/6161462/eb_connector/connector.css" type="text/css" media="screen" charset="utf-8" /> 
-    -->  
+    <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/connector.css')}" />
+    -->
+    
+    <link rel="stylesheet" href="http://dl.dropbox.com/u/6161462/EventbriteForSalesforce/resources/css/connector.css" type="text/css" media="screen" charset="utf-8" /> 
 
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery-ui.min.js')}" />
@@ -52,12 +53,15 @@ Written by Matt Yoder and Evan Callahan
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'slickgrid/controls/slick.pager.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/jstemplate.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'json/json2.js')}" />
+    <!-- 
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/connector.js')}" />
+    -->
     <!-- 
     <script src="https://dl.dropbox.com/u/6161462/eb_connector/jqEventbrite.js" type="text/javascript" ></script>  
     <script src="https://dl.dropbox.com/u/6161462/eb_connector/jstemplate.js" type="text/javascript" ></script>
-    <script src="https://dl.dropbox.com/u/6161462/eb_connector/connector.js" type="text/javascript" ></script>
     -->
+    <script src="http://dl.dropbox.com/u/6161462/EventbriteForSalesforce/resources/js/connector.js" type="text/javascript" ></script>
+    
     <script type="text/javascript">
         var j$ = jQuery.noConflict();
         j$(function() {
@@ -173,12 +177,12 @@ Written by Matt Yoder and Evan Callahan
         </div>
         <div id="campaign-existing-wrapper" class="campaign-wrapper">
             <div class="field-wrapper" id="campaign-create-wrapper">
-            	<apex:outputPanel rendered="{!canCreateCampaigns}">
+                <apex:outputPanel rendered="{!canCreateCampaigns}">
                 <input type="button" id="campaign-create" value="New {!CampaignLabel}" />
                 </apex:outputPanel>
-            	<apex:outputPanel rendered="{!NOT(canCreateCampaigns)}">
-				<input type="button" id="campaign-create" value="New {!CampaignLabel}" disabled="disabled" title="You do not have permission to create campaigns." />
-				</apex:outputPanel>
+                <apex:outputPanel rendered="{!NOT(canCreateCampaigns)}">
+                <input type="button" id="campaign-create" value="New {!CampaignLabel}" disabled="disabled" title="You do not have permission to create campaigns." />
+                </apex:outputPanel>
             </div>
             <div id="campaigns-grid-wrapper" class="grid-wrapper">
                 <div id="campaigns"></div>

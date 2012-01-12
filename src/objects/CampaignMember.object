@@ -2,14 +2,6 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <enableFeeds>false</enableFeeds>
     <fields>
-        <fullName>Event_Date_and_Time__c</fullName>
-        <externalId>false</externalId>
-        <inlineHelpText>Date and time of the Eventbrite event.</inlineHelpText>
-        <label>Event Date and Time</label>
-        <required>false</required>
-        <type>DateTime</type>
-    </fields>
-    <fields>
         <fullName>Eventbrite_Answers__c</fullName>
         <externalId>false</externalId>
         <label>Eventbrite Answers</label>
@@ -21,7 +13,7 @@
         <fullName>Eventbrite_Attendees_Checked_In__c</fullName>
         <externalId>false</externalId>
         <inlineHelpText>Number of attendees who were checked in for the event via Eventbrite mobile app or website.</inlineHelpText>
-        <label>Attendees Checked In</label>
+        <label>Eventbrite Attendees Checked In</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
@@ -40,15 +32,23 @@
     <fields>
         <fullName>Eventbrite_Checkins__c</fullName>
         <externalId>false</externalId>
-        <label>Barcodes Checked In</label>
+        <label>Eventbrite Barcodes Checked In</label>
         <length>32768</length>
         <type>LongTextArea</type>
         <visibleLines>2</visibleLines>
     </fields>
     <fields>
+        <fullName>Eventbrite_Date_and_Time__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>Date and time of the Eventbrite event for this ticket.</inlineHelpText>
+        <label>Eventbrite Date and Time</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+    <fields>
         <fullName>Eventbrite_Ticket_Quantity__c</fullName>
         <externalId>false</externalId>
-        <label>Ticket Quantity</label>
+        <label>Eventbrite Ticket Quantity</label>
         <precision>18</precision>
         <required>false</required>
         <scale>0</scale>
