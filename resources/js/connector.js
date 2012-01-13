@@ -467,7 +467,8 @@ function EventbriteImport($, settings, options) {
       id: eventId,
       count: 100,
       page: attendeePage,
-      do_not_display: 'profile'
+      do_not_display: 'profile',
+      show_full_barcodes: true
     }, function(response) {
       if (handleEventbriteError(response)) {
         
