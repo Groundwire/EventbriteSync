@@ -511,10 +511,10 @@ global with sharing class EventbriteImportController {
 			 				else
 			 					cm.Eventbrite_Ticket_Quantity__c += 1;
 						}
-						if (ebc.status == 'used' && !checkins.contains(ebc.id)) {	
+						if (ebc.status.toLowerCase() == 'used' && !checkins.contains(ebc.id)) {	
 							cm.eventbrite_checkins__c = (cm.eventbrite_checkins__c == null) ?
 								ebc.id : (cm.eventbrite_checkins__c + ';' + ebc.id); 		 			
-			 				barcodes.add(ebc.id);
+			 				checkins.add(ebc.id);
 
 							// for new checkins, increment the attendees
 							if (cm.Eventbrite_Attendees_Checked_In__c == null) 
