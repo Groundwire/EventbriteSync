@@ -235,9 +235,17 @@ Written by Matt Yoder and Evan Callahan
             Create {!LOWER(AccountLabelPlural)} for unrecognized company names.
         </div>
         <div class="field-wrapper import-contacts import-contacts-opps">
-            <span class="form-label">Update Contact Info</span>
-            <input type="checkbox" name="overwrite-contact" id="overwrite-contact" value="overwrite" checked="" />
-            Overwrite contact address and phone with new values from Eventbrite.
+            <span class="form-label">Update {!ContactLabel} Info</span>
+            <div class="form-field">
+                <div class="radio-wrapper">
+                    <input type="radio" name="overwrite-contact" id="overwrite-contact-false" value="false" />
+                    <label for="overwrite-contact-false">Import address and phone only when blank in Salesforce.</label>
+                </div>
+                <div class="radio-wrapper">
+                    <input type="radio" name="overwrite-contact" id="overwrite-contact-true" value="true" />
+                    <label for="overwrite-contact-true">Overwrite address and phone whenever Eventbrite has values.</label>
+                </div>
+            </div>
         </div>
         
         <apex:outputPanel rendered="{!NOT(ISNULL(OppRecordTypes))}" >

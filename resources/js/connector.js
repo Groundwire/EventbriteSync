@@ -36,7 +36,7 @@ function EventbriteImport($, settings, options) {
     matchContacts = $('#match-contacts'),
     contactDescription = $('#contact-description'),
     importCreateAccounts = $('#create-accounts'),
-    importOverwriteContacts = $('#overwrite-contact'),
+    importOverwriteContacts = $('input[name="overwrite-contact"]'),
     leadSource = $('select[id$="leadSource"]'),
     oppStage = $('select[id$="oppStage"]'),
     oppContactRole = $('select[id$="oppRole"]'),
@@ -903,7 +903,7 @@ function EventbriteImport($, settings, options) {
   radioIndexSetting(importAction, 'gweb__Option_for_Leads_or_Contacts__c');
   checkboxSetting(matchContacts, 'gweb__Use_Existing_Contact__c');
   checkboxSetting(importCreateAccounts, 'gweb__Create_Accounts__c');
-  checkboxSetting(importOverwriteContacts, 'gweb__Overwrite_Contact_Detail__c');
+  radioBoolSetting(importOverwriteContacts, 'gweb__Overwrite_Contact_Detail__c');
   simpleSetting(leadSource, 'gweb__Lead_Source__c');
   simpleSetting(oppStage, 'gweb__Opp_Stage__c');
   simpleSetting(oppContactRole, 'gweb__Opp_Contact_Role__c');

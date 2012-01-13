@@ -93,7 +93,7 @@ span.form-label {
 }
 
 .field-wrapper {
-    clear: left;
+    clear: both;
     padding: 0.5em 0 1em;
 }
 
@@ -101,6 +101,11 @@ span.form-label {
 .field-wrapper span.form-label {
     float: left;
     width: 12em;
+}
+
+.field-wrapper .form-field label {
+    float: none;
+    width: auto;
 }
 
 .field-wrapper table label {
@@ -112,6 +117,10 @@ span.form-label {
 input.text,
 .field-wrapper textarea {
     padding: 0.25em 0.5em;
+}
+
+.form-field {
+    float: left;
 }
 
 /* Buttons */
