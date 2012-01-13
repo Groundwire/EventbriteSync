@@ -25,6 +25,7 @@ function EventbriteImport($, settings, options) {
     campaignNewEnd = $('#campaign-end-wrapper input').addClass('text ui-widget-content ui-corner-all'),
     campaignNewParent = $('#campaign-parent-wrapper input[type="hidden"]').eq(0),
     campaignNewParentText = $('#campaign-parent-wrapper input[type="text"]').addClass('text ui-widget-content ui-corner-all'),
+    campaignNewDescription = $('#campaign-description'),
     campaignNewButton = $('#campaign-create').button(),
     importButton = $('#import').button({disabled: true}),
     importStatus = $('#import-status'),
@@ -436,13 +437,25 @@ function EventbriteImport($, settings, options) {
       // Update new campaign details.
       campaignNewName.val(selectedEvent.title);
       contactDescription.val('Imported from Eventbrite event "' + selectedEvent.title + '"');
+      
+      var descriptionText = $('<div></div>').html(selectedEvent.description || '').text(),
+        start = null,
+        end = null;
+      if (descriptionText.length > 0) descriptionText += '\n\n';
+      
       if (selectedEvent.start_date) {
-        campaignNewStart.val(formatEventbriteDate(selectedEvent.start_date));
+        start = formatEventbriteDate(selectedEvent.start_date);
+        campaignNewStart.val(start);
+        descriptionText += start;
       }
       if (selectedEvent.end_date) {
-        campaignNewEnd.val(formatEventbriteDate(selectedEvent.end_date));
+        end = formatEventbriteDate(selectedEvent.end_date);
+        campaignNewEnd.val(end);
+        if (start !== end) descriptionText += ' - ' + end;
       }
       
+      campaignNewDescription.val(descriptionText);
+
       freeEvent = true;
       populateAttendeeList(selectedEvent.id, 1);
     }
@@ -658,6 +671,7 @@ function EventbriteImport($, settings, options) {
       dateForSF(campaignNewEnd.val()),
       campaignNewStatus.val() || null,
       parentId,
+      campaignNewDescription.val(),
       callback
     ];
   };

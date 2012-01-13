@@ -359,6 +359,10 @@ Written by Matt Yoder and Evan Callahan
         <apex:outputLabel value="Parent {!CampaignLabel}" for="targetCampaign.ParentId" />
         <apex:inputField value="{!targetCampaign.ParentId}" />
     </div>
+    <div class="field-wrapper" id="campaign-description-wrapper">
+        <label for="campaign-description">{!CampaignLabel} Description</label>
+        <textarea id="campaign-description" name="campaign-description" rows="3" cols="48"></textarea>
+    </div>
 </div>
 
 <div id="about-userkey" title="What is an API User Key?">
