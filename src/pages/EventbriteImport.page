@@ -216,54 +216,59 @@ Written by Matt Yoder and Evan Callahan
             <input type="radio" name="import-action" id="import-action-contacts-opps" value="contacts-opps" />
             <label for="import-action-contacts-opps">Create {!ContactLabelPlural} &amp; {!oppLabelPlural}</label>
         </div>
-        <div class="field-wrapper import-leads import-contacts import-contacts-opps">
-            <span class="form-label">Prevent Duplicates</span>
-            <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
-            Use existing {!LOWER(ContactLabel)} where email matches.
-        </div>
-        <div class="field-wrapper import-leads import-contacts import-contacts-opps">
-            <label for="contact-description"><span class="import-type-text">{!ContactLabel}</span> Description</label>
-            <textarea rows="2" columns="20" name="contact-description" id="contact-description" value="" class="text ui-widget-content ui-corner-all" />
-        </div>
-        <div class="field-wrapper import-leads import-contacts import-contacts-opps"> 
-            <apex:outputLabel value="Lead Source" for="leadSource" />
-            <apex:inputField value="{!defaultOpp.leadSource}" id="leadSource" />
-        </div>
-        <div class="field-wrapper import-contacts import-contacts-opps">
-            <span class="form-label">Company Names</span>
-            <input type="checkbox" name="create-accounts" id="create-accounts" value="create" checked="" />
-            Create {!LOWER(AccountLabelPlural)} for unrecognized company names.
-        </div>
-        <div class="field-wrapper import-contacts import-contacts-opps">
-            <span class="form-label">Update {!ContactLabel} Info</span>
-            <div class="form-field">
-                <div class="radio-wrapper">
-                    <input type="radio" name="overwrite-contact" id="overwrite-contact-false" value="false" />
-                    <label for="overwrite-contact-false">Import address and phone only when blank in Salesforce.</label>
-                </div>
-                <div class="radio-wrapper">
-                    <input type="radio" name="overwrite-contact" id="overwrite-contact-true" value="true" />
-                    <label for="overwrite-contact-true">Overwrite address and phone whenever Eventbrite has values.</label>
+        <fieldset>
+            <legend>Configure <span class="import-type-text">{!ContactLabel}</span></legend>
+            <div class="field-wrapper import-leads import-contacts import-contacts-opps">
+                <span class="form-label">Prevent Duplicates</span>
+                <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
+                Use existing {!LOWER(ContactLabel)} where email matches.
+            </div>
+            <div class="field-wrapper import-leads import-contacts import-contacts-opps">
+                <label for="contact-description"><span class="import-type-text">{!ContactLabel}</span> Description</label>
+                <textarea rows="2" columns="20" name="contact-description" id="contact-description" value="" class="text ui-widget-content ui-corner-all" />
+            </div>
+            <div class="field-wrapper import-leads import-contacts import-contacts-opps"> 
+                <apex:outputLabel value="Lead Source" for="leadSource" />
+                <apex:inputField value="{!defaultContact.leadSource}" id="leadSource" />
+            </div>
+            <div class="field-wrapper import-contacts import-contacts-opps">
+                <span class="form-label">Company Names</span>
+                <input type="checkbox" name="create-accounts" id="create-accounts" value="create" checked="" />
+                Create {!LOWER(AccountLabelPlural)} for unrecognized company names.
+            </div>
+            <div class="field-wrapper import-contacts import-contacts-opps">
+                <span class="form-label">Update {!ContactLabel} Info</span>
+                <div class="form-field">
+                    <div class="radio-wrapper">
+                        <input type="radio" name="overwrite-contact" id="overwrite-contact-false" value="false" />
+                        <label for="overwrite-contact-false">Import address and phone only when blank in Salesforce.</label>
+                    </div>
+                    <div class="radio-wrapper">
+                        <input type="radio" name="overwrite-contact" id="overwrite-contact-true" value="true" />
+                        <label for="overwrite-contact-true">Overwrite address and phone whenever Eventbrite has values.</label>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <apex:outputPanel rendered="{!NOT(ISNULL(OppRecordTypes))}" >
+        </fieldset>
+        <fieldset class="import-contacts-opps">
+            <legend>Configure {!oppLabel}</legend>
+            <apex:outputPanel rendered="{!NOT(ISNULL(OppRecordTypes))}" >
+                <div class="field-wrapper import-contacts-opps"> 
+                    <apex:outputLabel value="Record Type" for="oppRecordType" />
+                    <apex:selectRadio id="oppRecordType" >
+                        <apex:selectOptions value="{!oppRecordTypes}" />
+                    </apex:selectRadio>
+                </div>
+            </apex:outputPanel>
             <div class="field-wrapper import-contacts-opps"> 
-                <apex:outputLabel value="Record Type" for="oppRecordType" />
-                <apex:selectRadio id="oppRecordType" >
-                    <apex:selectOptions value="{!oppRecordTypes}" />
-                </apex:selectRadio>
+                <apex:outputLabel value="Stage" for="oppStage" />
+                <apex:inputField value="{!defaultOpp.stageName}" id="oppStage" />
             </div>
-        </apex:outputPanel>
-        <div class="field-wrapper import-contacts-opps"> 
-            <apex:outputLabel value="Stage" for="oppStage" />
-            <apex:inputField value="{!defaultOpp.stageName}" id="oppStage" />
-        </div>
-        <div class="field-wrapper import-contacts-opps"> 
-            <apex:outputLabel value="Contact Role" for="oppRole" />
-            <apex:inputField value="{!defaultOCR.role}" id="oppRole" />
-        </div>
+            <div class="field-wrapper import-contacts-opps"> 
+                <apex:outputLabel value="Contact Role" for="oppRole" />
+                <apex:inputField value="{!defaultOCR.role}" id="oppRole" />
+            </div>
+        </fieldset>
 
         <div id="import-controls" class="tab-controls">
             <input type="button" id="import" value="Import" />

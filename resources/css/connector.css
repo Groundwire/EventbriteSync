@@ -123,6 +123,13 @@ input.text,
     float: left;
 }
 
+#container fieldset {
+    border: 1px solid #CCCCCC;
+    margin-bottom: 1em;
+    padding: 0.5em 1em 1em;
+    border-radius: 4px;
+}
+
 /* Buttons */
 #do-login .ui-button,
 .tab-controls .ui-button {
