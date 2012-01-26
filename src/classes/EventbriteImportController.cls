@@ -365,6 +365,13 @@ global with sharing class EventbriteImportController {
 				
 				} else if (leadFieldNames.contains('Home_Phone__c')) {
 					l.put('Home_Phone__c', eba.home_phone);
+					if (leadFieldNames.contains('Opportunity_Description__c')) {
+						l.put('Opportunity_Amount__c', eba.amount_paid);
+						l.put('Opportunity_Date__c', eba.created.date());
+						l.put('Opportunity_Description__c', 'Eventbrite Order - ' + ebEvent.title);
+						l.put('Opportunity_Record_Type__c', OppRecordTypeId);
+						l.put('Opportunity_Stage__c', settings.opp_stage__c);
+					}
 				} else if (eba.work_phone == null) {
 					l.phone = eba.home_phone;
 				}
