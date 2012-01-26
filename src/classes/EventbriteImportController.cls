@@ -36,6 +36,7 @@ global with sharing class EventbriteImportController {
 	public string settingsJson { get; private set; }
 	public string campaignJson { get; private set; }
 	public campaign targetCampaign { get; set; }
+	public contact defaultContact { get; private set; }
 	public opportunity defaultOpp { get; set; }
 	public opportunityContactRole defaultOCR { get; set; }
 	public list<selectOption> CampaignRecordTypes { get; private set; }
@@ -100,6 +101,7 @@ global with sharing class EventbriteImportController {
 		targetCampaign = new Campaign();
 		defaultOpp = new Opportunity();
 		defaultOCR = new OpportunityContactRole();
+		defaultContact = new Contact();
 		
 		canCreateCampaigns = Describe.getObjectDescribe('Campaign').isCreateable();
 	}
