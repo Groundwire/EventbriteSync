@@ -227,7 +227,7 @@ Written by Matt Yoder and Evan Callahan
         </div>
         <div class="field-wrapper import-leads import-contacts import-contacts-opps"> 
             <apex:outputLabel value="Lead Source" for="leadSource" />
-            <apex:inputField value="{!defaultOpp.leadSource}" id="leadSource" />
+            <apex:inputField value="{!defaultContact.leadSource}" id="leadSource" />
         </div>
         <div class="field-wrapper import-contacts import-contacts-opps">
             <span class="form-label">Company Names</span>
