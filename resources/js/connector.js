@@ -42,6 +42,7 @@ function EventbriteImport($, settings, options) {
     oppStage = $('select[id$="oppStage"]'),
     oppContactRole = $('select[id$="oppRole"]'),
     oppRecordType = $('table[id$="oppRecordType"] input[type="radio"]'),
+    oppFreeOrders = $('input#create-free-opps'),
     importTypeText = $('.import-type-text'),
     /* Dialogs */
     importProgress = $('#import-progress').dialog({
@@ -167,8 +168,7 @@ function EventbriteImport($, settings, options) {
     /* Cache */
     campaignMemberStatusCache = {},
     /* Status */
-    importError = false,
-    freeEvent = true;
+    importError = false;
     
   /* Settings */
     
@@ -250,6 +250,7 @@ function EventbriteImport($, settings, options) {
       settings['gweb__Opp_Contact_Role__c'] || null,
       settings['gweb__Opp_Record_Type_Id__c'] || null,
       settings['gweb__Opp_Stage__c'] || null,
+      settings['gweb__Create_Opps_for_Free_Tickets__c'],
       callback,
       {escape: false}
     ];
@@ -456,7 +457,6 @@ function EventbriteImport($, settings, options) {
       
       campaignNewDescription.val(descriptionText);
 
-      freeEvent = true;
       populateAttendeeList(selectedEvent.id, 1);
     }
   };
@@ -474,9 +474,6 @@ function EventbriteImport($, settings, options) {
         
         $.each(response.attendees, function() {
           attendeeData.addItem(this.attendee);
-          if (this.attendee.amount_paid > 0) {
-            freeEvent = false;
-          }
         });
         
         if (response.attendees.length < 100) {
@@ -489,14 +486,6 @@ function EventbriteImport($, settings, options) {
           }
           resetSelectionCache(attendeeContainer);
           attendeeGrid.setSelectedRows(rows);
-          if (freeEvent) {
-            importActionContactsOpps.button('disable');
-            if (importAction.filter(':checked').val() === 'contacts-opps') {
-              importActionContacts.click();
-            }
-          } else {
-            importActionContactsOpps.button('enable');
-          }
         } else {
           populateAttendeeList(eventId, attendeePage + 1);
         }
@@ -923,6 +912,7 @@ function EventbriteImport($, settings, options) {
   simpleSetting(oppStage, 'gweb__Opp_Stage__c');
   simpleSetting(oppContactRole, 'gweb__Opp_Contact_Role__c');
   radioValueSetting(oppRecordType, 'gweb__Opp_Record_Type_Id__c');
+  checkboxSetting(oppFreeOrders, 'gweb__Create_Opps_for_Free_Tickets__c');
   
   /* Show time! */
   container.show();
