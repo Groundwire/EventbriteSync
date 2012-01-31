@@ -208,6 +208,11 @@ Written by Matt Yoder and Evan Callahan
     </div>
     <div id="importSection">
         <h3>What type of object should we create in Salesforce?</h3>
+        <p id="import-message">
+            Sorry, you can&apos;t create {!LOWER(oppLabelPlural)}.
+            Your event has more than one attendee per order,
+            and Eventbrite does not provide the name of the purchaser.
+        </p>
         <div id="import-action">
             <input type="radio" name="import-action" id="import-action-leads" value="leads" />
             <label for="import-action-leads">Create {!LeadLabelPlural}</label>

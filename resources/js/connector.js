@@ -33,6 +33,7 @@ function EventbriteImport($, settings, options) {
     importActionContacts = $('#import-action-contacts'),
     importActionContactsOpps = $('#import-action-contacts-opps'),
     importAction = $('input[name="import-action"]'),
+    importMessage = $('#import-message').hide(),
     importIndicator = $('#import-indicator').progressbar({value: 0}),
     matchContacts = $('#match-contacts'),
     contactDescription = $('#contact-description'),
@@ -457,11 +458,11 @@ function EventbriteImport($, settings, options) {
       
       campaignNewDescription.val(descriptionText);
 
-      populateAttendeeList(selectedEvent.id, 1);
+      populateAttendeeList(selectedEvent.id, 1, [], false);
     }
   };
   
-  function populateAttendeeList(eventId, attendeePage) {
+  function populateAttendeeList(eventId, attendeePage, orderIds, duplicateOrderIds) {
     // Query for attendees.
     ebClient.event_list_attendees({
       id: eventId,
@@ -474,6 +475,11 @@ function EventbriteImport($, settings, options) {
         
         $.each(response.attendees, function() {
           attendeeData.addItem(this.attendee);
+          if ($.inArray(this.attendee.order_id, orderIds) === -1) {
+            orderIds.push(this.attendee.order_id);
+          } else {
+            duplicateOrderIds = true;
+          }
         });
         
         if (response.attendees.length < 100) {
@@ -486,8 +492,18 @@ function EventbriteImport($, settings, options) {
           }
           resetSelectionCache(attendeeContainer);
           attendeeGrid.setSelectedRows(rows);
+          if (duplicateOrderIds) {
+            importMessage.show();
+            importActionContactsOpps.button('disable');
+            if (importAction.filter(':checked').val() === 'contacts-opps') {
+              importActionContacts.click();
+            }
+          } else {
+            importMessage.hide();
+            importActionContactsOpps.button('enable');
+          }
         } else {
-          populateAttendeeList(eventId, attendeePage + 1);
+          populateAttendeeList(eventId, attendeePage + 1, orderIds, duplicateOrderIds);
         }
       }
     });
