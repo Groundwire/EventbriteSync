@@ -909,6 +909,20 @@ function EventbriteImport($, settings, options) {
     }
   });
   
+  $('#password').keypress(function(e) {
+    if(e.which == 13 && $(this).val() != "") {
+      $(this).blur();
+      $('#authenticate').focus().click();
+    }
+  });
+
+  $('#userkey').keypress(function(e) {
+    if(e.which == 13 && $(this).val() != "") {
+      $(this).blur();
+      $('#authenticate').focus().click();
+    }
+  });
+
   /* Initialize settings */
   simpleSetting(userkey, 'gweb__API_User_Key__c');
   simpleSetting(email, 'gweb__Username__c');
