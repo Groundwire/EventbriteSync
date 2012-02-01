@@ -216,8 +216,6 @@ global with sharing class EventbriteImportController {
 				attendeeEmails.add( eba.email );
 			if (eba.order_id != null)
 				orderIds.add( eba.order_id );
-			if (eba.company != null) 
-				companyNameMap.put( eba.company, eba );
 		}
 
 		// get the field names
@@ -263,6 +261,10 @@ global with sharing class EventbriteImportController {
 		}
 		
 		// map the existing account names
+		for (Eventbrite.Attendee eba : ebaList) {
+			if (eba.company != null && !contactMatchmap.containsKey(eba.email)) 
+				companyNameMap.put( eba.company, eba );
+		}
 		map<string, id> accountNameMap = new map<string, id>(); 
 		if (settings.Option_for_Leads_or_Contacts__c != 0) {
 			for (account a : [select id, name from account where name in : companyNameMap.keyset() order by lastModifiedDate])
@@ -274,7 +276,8 @@ global with sharing class EventbriteImportController {
 					if (!accountNameMap.containsKey(s)) {
 						Eventbrite.Attendee eba = companyNameMap.get(s);
 						account a = new Account(name = s, description = contactDescription, website = eba.website);
-						fillAddress(eba.work_address, (sobject)a, 'billing', false);
+						if (eba.work_address != null)
+							fillAddress(eba.work_address, (sobject)a, 'billing', false);
 						newAccts.add(a);
 					}
 				}
@@ -804,10 +807,11 @@ global with sharing class EventbriteImportController {
 		system.assertEquals('CallahanTEST', result[0].lastname);
 		system.assertEquals('Created ' + contactLabel + '. Created order ' + oppLabel + '. ', result[0].summary);
 		
-		list<campaignMember> cm = [select id, status, contactid, eventbrite_answers__c from campaignmember where campaign.id =: ccr.CampaignId];
+		list<campaignMember> cm = [select id, status, contactid, contact.account.name, eventbrite_answers__c from campaignmember where campaign.id =: ccr.CampaignId];
 		system.assertEquals(1, cm.size());
 		system.assertEquals('Sent', cm[0].status);
 		system.assert(cm[0].eventbrite_answers__c.contains('In your own words'));
+		system.assertEquals('Groundwire ConsultingTEST', cm[0].contact.account.name);
 		
 		list<opportunity> oo = [select id, name, campaignId, amount, eventbrite_ticket_type__c from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(1, oo.size());
