@@ -108,7 +108,10 @@ span.form-label {
     width: auto;
 }
 
-.field-wrapper table label {
+.field-wrapper label.checkbox-label,
+.field-wrapper table label,
+.radio-wrapper label
+{
     float: none;
     font-weight: normal;
     width: auto;
@@ -167,6 +170,10 @@ input.text,
 .tab-controls .button-status {
     float: right;
     margin: 0.5em 1em 0 1em;
+}
+
+#ebMain .ui-tabs-panel {
+	padding: 1.3em 1.4em;
 }
 
 /* Login tab */
