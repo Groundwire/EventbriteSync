@@ -4,6 +4,7 @@
     <fields>
         <fullName>Eventbrite_Answers__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Text of attendee custom questions and answers, if any.</inlineHelpText>
         <label>Eventbrite Answers</label>
         <length>32768</length>
         <type>LongTextArea</type>
@@ -32,6 +33,7 @@
     <fields>
         <fullName>Eventbrite_Checkins__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Barcodes for this campaign member that were checked-in, separated by semicolons.</inlineHelpText>
         <label>Eventbrite Barcodes Checked In</label>
         <length>32768</length>
         <type>LongTextArea</type>
@@ -48,6 +50,7 @@
     <fields>
         <fullName>Eventbrite_Ticket_Quantity__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>Number of tickets registered to this attendee.</inlineHelpText>
         <label>Eventbrite Ticket Quantity</label>
         <precision>18</precision>
         <required>false</required>
