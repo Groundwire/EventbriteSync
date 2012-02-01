@@ -57,6 +57,13 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Create_Opps_for_Free_Tickets__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Create Opportunities for Free Tickets</label>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>Lead_Source__c</fullName>
         <externalId>false</externalId>
         <label>Lead Source</label>

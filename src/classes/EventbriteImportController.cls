@@ -173,7 +173,7 @@ global with sharing class EventbriteImportController {
   		string Username, string Password, string apiUserKey, integer OptionForLeadsOrContacts, 
   		boolean UseExistingContact, boolean OverwriteContactDetail,	string LeadSource, boolean CreateAccounts, 
   		integer OptionForCampaign, string CampaignMbrStatus, string OppContactRole,	string OppRecordTypeId, 
-  		string OppStage	) {
+  		string OppStage, boolean CreateFreeOpps ) {
 
 		// update settings object using parameters passed in
 		Eventbrite_Connector_Settings__c settings = Eventbrite_Connector_Settings__c.getInstance( UserInfo.getUserId() );
@@ -190,6 +190,7 @@ global with sharing class EventbriteImportController {
 		settings.Opp_Contact_Role__c = OppContactRole;
 		settings.Opp_Record_Type_Id__c = OppRecordTypeId;
 		settings.Opp_Stage__c = OppStage;
+		settings.Create_Opps_for_Free_Tickets__c = CreateFreeOpps;
 		
 		// get the set of contact emails and order Ids in the attendee list
 		set<string> attendeeEmails = new set<string>();
@@ -579,7 +580,8 @@ global with sharing class EventbriteImportController {
 			Eventbrite.Attendee eba = ebaList[i]; 
 			 	
 			contact c = indexContactMap.get(i);				
-		 	if (c != null && settings.Option_for_Leads_or_Contacts__c == 2 && eba.amount_paid != null && eba.amount_paid > 0) {
+		 	if (c != null && settings.Option_for_Leads_or_Contacts__c == 2 && 
+		 		(settings.Create_Opps_for_Free_Tickets__c || (eba.amount_paid != null && eba.amount_paid > 0))) {
 
 				opportunity o;	
 				if (orderOppMap.containsKey(eba.order_id)) {
@@ -796,7 +798,7 @@ global with sharing class EventbriteImportController {
 		list<ImportAttendeeResult> result = 
 			EventbriteImportController.importAttendees(oneEvent, new list<string>{oneAttendee}, ccr.CampaignId, 
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 2, true, true, 'Phone Inquiry',
-				true, 0, 'Sent', 'Other', null, 'Closed Won');			
+				true, 0, 'Sent', 'Other', null, 'Closed Won', false);			
 
 		system.assertEquals(1, result.size());
 		system.assertEquals('CallahanTEST', result[0].lastname);
@@ -834,7 +836,7 @@ global with sharing class EventbriteImportController {
 		result = 
 			EventbriteImportController.importAttendees(oneEvent, attendees, ccr.CampaignId, 
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 2, true, true, 'Phone Inquiry',
-				true, 0, 'Responded', 'Other', null, 'Closed Won');			
+				true, 0, 'Responded', 'Other', null, 'Closed Won', false);			
 
 		system.assertEquals(5, result.size());
 		system.assertEquals('Bob', result[0].firstname);
@@ -879,7 +881,7 @@ global with sharing class EventbriteImportController {
 		list<ImportAttendeeResult> result = 
 			EventbriteImportController.importAttendees(oneEvent, attendees, ccr.CampaignId, 
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 0, true, true, 'Phone Inquiry',
-				true, 0, 'Responded', null, null, null);			
+				true, 0, 'Responded', null, null, null, false);			
 
 		system.assertEquals(2, result.size());
 		system.assertEquals('Created ' + leadLabel + '. ', result[0].summary);
@@ -916,7 +918,7 @@ global with sharing class EventbriteImportController {
 		list<ImportAttendeeResult> result = 
 			EventbriteImportController.importAttendees(oneEvent, attendees, ccr.CampaignId, 
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 0, true, true, 'Phone Inquiry',
-				true, 0, 'Sent', null, null, null);			
+				true, 0, 'Sent', null, null, null, false);			
 
 		system.assertEquals(2, result.size());
 		system.assertEquals('Created ' + leadLabel + '. ', result[0].summary);
@@ -947,7 +949,7 @@ global with sharing class EventbriteImportController {
 		list<ImportAttendeeResult> result = 
 			EventbriteImportController.importAttendees(oneEvent, new list<string>{ oneAttendee }, null, 
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 1, true, true, 'Phone Inquiry',
-				true, 1, 'Sent', null, null, null);			
+				true, 1, 'Sent', null, null, null, false);			
 
 		system.assertEquals(1, result.size());
 		system.assertEquals('Failed to create ' + contactLabel + '; Email: invalid email address: BOGUS ', result[0].summary);		
