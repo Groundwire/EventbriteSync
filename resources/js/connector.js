@@ -432,33 +432,35 @@ function EventbriteImport($, settings, options) {
     var selectedEvent = getSelectedItem(eventContainer, eventData);
     if (selectedEvent) {
       attendeeData.setItems([]);
-      attendeeContainer.addClass('grid-loading');
-      eventButton.button('disable');
-      attendeeData.beginUpdate();
-      
-      // Update new campaign details.
-      campaignNewName.val(selectedEvent.title);
-      contactDescription.val('Imported from Eventbrite event "' + selectedEvent.title + '"');
-      
-      var descriptionText = $('<div></div>').html(selectedEvent.description || '').text(),
-        start = null,
-        end = null;
-      if (descriptionText.length > 0) descriptionText += '\n\n';
-      
-      if (selectedEvent.start_date) {
-        start = formatEventbriteDate(selectedEvent.start_date);
-        campaignNewStart.val(start);
-        descriptionText += start;
-      }
-      if (selectedEvent.end_date) {
-        end = formatEventbriteDate(selectedEvent.end_date);
-        campaignNewEnd.val(end);
-        if (start !== end) descriptionText += ' - ' + end;
-      }
-      
-      campaignNewDescription.val(descriptionText);
+      if (selectedEvent.num_attendee_rows > 0) {
+        attendeeContainer.addClass('grid-loading');
+        eventButton.button('disable');
+        attendeeData.beginUpdate();
 
-      populateAttendeeList(selectedEvent.id, 1, [], false);
+        // Update new campaign details.
+        campaignNewName.val(selectedEvent.title);
+        contactDescription.val('Imported from Eventbrite event "' + selectedEvent.title + '"');
+
+        var descriptionText = $('<div></div>').html(selectedEvent.description || '').text(),
+          start = null,
+          end = null;
+        if (descriptionText.length > 0) descriptionText += '\n\n';
+
+        if (selectedEvent.start_date) {
+          start = formatEventbriteDate(selectedEvent.start_date);
+          campaignNewStart.val(start);
+          descriptionText += start;
+        }
+        if (selectedEvent.end_date) {
+          end = formatEventbriteDate(selectedEvent.end_date);
+          campaignNewEnd.val(end);
+          if (start !== end) descriptionText += ' - ' + end;
+        }
+
+        campaignNewDescription.val(descriptionText);
+
+        populateAttendeeList(selectedEvent.id, 1, [], false);
+      }
     }
   };
   
