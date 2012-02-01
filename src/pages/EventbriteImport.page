@@ -206,9 +206,10 @@ Written by Matt Yoder and Evan Callahan
     <div id="importSection">
         <h3>What type of object should we create in Salesforce?</h3>
         <p id="import-message">
-            Sorry, you can&apos;t create {!LOWER(oppLabelPlural)}.
-            Your event has more than one attendee per order,
-            and Eventbrite does not provide the name of the purchaser.
+            Sorry, you cannot create {!LOWER(oppLabelPlural)}.
+            Your event has more than one attendee per order;
+            when this is the case, the Eventbrite API does not indicate 
+            who placed the order.
         </p>
         <div id="import-action">
             <input type="radio" name="import-action" id="import-action-leads" value="leads" />
@@ -223,7 +224,7 @@ Written by Matt Yoder and Evan Callahan
             <div class="field-wrapper import-leads import-contacts import-contacts-opps">
                 <span class="form-label">Prevent Duplicates</span>
                 <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
-                Use existing {!LOWER(ContactLabel)} where email matches.
+                <label for="match-contacts" class="checkbox-label" >Use existing {!LOWER(ContactLabel)} where email matches.</label>
             </div>
             <div class="field-wrapper import-leads import-contacts import-contacts-opps">
                 <label for="contact-description"><span class="import-type-text">{!ContactLabel}</span> Description</label>
@@ -236,18 +237,18 @@ Written by Matt Yoder and Evan Callahan
             <div class="field-wrapper import-contacts import-contacts-opps">
                 <span class="form-label">Company Names</span>
                 <input type="checkbox" name="create-accounts" id="create-accounts" value="create" checked="" />
-                Create {!LOWER(AccountLabelPlural)} for unrecognized company names.
+                <label for="create-accounts" class="checkbox-label" >Create {!LOWER(AccountLabelPlural)} for unrecognized company names.</label>
             </div>
             <div class="field-wrapper import-contacts import-contacts-opps">
                 <span class="form-label">Update {!ContactLabel} Info</span>
                 <div class="form-field">
                     <div class="radio-wrapper">
                         <input type="radio" name="overwrite-contact" id="overwrite-contact-false" value="false" />
-                        <label for="overwrite-contact-false">Import address and phone only when blank in Salesforce.</label>
+                        <label for="overwrite-contact-false" >Import address and phone only when blank in Salesforce.</label>
                     </div>
                     <div class="radio-wrapper">
                         <input type="radio" name="overwrite-contact" id="overwrite-contact-true" value="true" />
-                        <label for="overwrite-contact-true">Overwrite address and phone whenever Eventbrite has values.</label>
+                        <label for="overwrite-contact-true" >Overwrite address and phone whenever Eventbrite has values.</label>
                     </div>
                 </div>
             </div>
@@ -269,6 +270,11 @@ Written by Matt Yoder and Evan Callahan
             <div class="field-wrapper import-contacts-opps"> 
                 <apex:outputLabel value="Contact Role" for="oppRole" />
                 <apex:inputField value="{!defaultOCR.role}" id="oppRole" />
+            </div>
+            <div class="field-wrapper import-contacts-opps">
+                <span class="form-label">Free Orders</span>
+                <input type="checkbox" name="create-free-opps" id="create-free-opps" value="create" checked="" />
+                <label for="create-free-opps" class="checkbox-label" >Create {!LOWER(OppLabelPlural)} even when tickets are free.</label>
             </div>
         </fieldset>
 
