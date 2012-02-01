@@ -35,11 +35,10 @@ Written by Matt Yoder and Evan Callahan
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/ui-lightness/jquery-ui-1.8.16.custom.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'slickgrid/slick.grid.css')}" />
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'slickgrid/controls/slick.pager.css')}" />
-    <!-- 
     <apex:stylesheet value="{!URLFOR($Resource.EventbriteResources, 'css/connector.css')}" />
+    <!--     
+    <link rel="stylesheet" href="https://dl.dropbox.com/u/6161462/EventbriteForSalesforce/resources/css/connector.css" type="text/css" media="screen" charset="utf-8" /> 
     -->
-    
-    <link rel="stylesheet" href="http://dl.dropbox.com/u/6161462/EventbriteForSalesforce/resources/css/connector.css" type="text/css" media="screen" charset="utf-8" /> 
 
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery.min.js')}" />
     <apex:includeScript value="{!URLFOR($Resource.EventbriteResources, 'js/jquery-ui.min.js')}" />
