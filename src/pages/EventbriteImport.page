@@ -222,8 +222,8 @@ Written by Matt Yoder and Evan Callahan
 		</div>
         <h3>What type of object should we create in Salesforce?</h3>
         <p id="import-message">
-            Sorry, you cannot create {!LOWER(oppLabelPlural)}.
-            Your event has more than one attendee per order;
+            Sorry, you can create {!LOWER(leadLabelPlural)} or {!LOWER(contactLabelPlural)}, but not {!LOWER(oppLabelPlural)}.
+            Your event has information for more than one attendee per order; <br />
             when this is the case, the Eventbrite API does not indicate 
             who placed the order.
         </p>
