@@ -176,6 +176,37 @@ input.text,
 	padding: 1.3em 1.4em;
 }
 
+.help-link {
+	padding-left: 21px;
+	float:right;
+}
+
+.help-link img {
+	float: left;
+	margin-left: -21px;
+}
+
+.help-link span {
+	display: block;
+	padding: 3px 0;
+}
+
+/* footer */
+#footer-section {
+	display: block;
+	width: 860px;
+	padding: 20px 20px 50px 20px;
+	text-align: center;
+}
+
+#footer-section .footer-eb {
+	float:left;
+}
+
+#footer-section .footer-gw {
+	float:right;
+}
+
 /* Login tab */
 #login-inner {
     margin: 0 auto;

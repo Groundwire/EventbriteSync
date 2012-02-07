@@ -92,6 +92,10 @@ Written by Matt Yoder and Evan Callahan
         <li><a href="#resultsSection">5. Results</a></li>
     </ul>
     <div id="login-section">
+		<div class="help-link" >
+			<a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+			<img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
+		</div>
         <div id="login-inner">
             <div id="login-email-password">
                 <h3>Login with email and password:</h3>
@@ -129,6 +133,10 @@ Written by Matt Yoder and Evan Callahan
         <div class="clear"></div>
     </div>
     <div id="eventSection">
+		<div class="help-link" >
+			<a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+			<img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
+		</div>
         <div id="events-wrapper">
             <h3>Choose your event</h3>
             <p id="events-search-wrapper">
@@ -165,6 +173,10 @@ Written by Matt Yoder and Evan Callahan
         <div class="clear"></div>
     </div>
     <div id="campaignSection">
+		<div class="help-link" >
+			<a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+			<img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
+		</div>
         <h3>What do you want to do?</h3>
         <div id="campaign-action">
             <input type="radio" name="campaign-action" id="campaign-action-existing" value="existing" />
@@ -204,6 +216,10 @@ Written by Matt Yoder and Evan Callahan
         <div class="clear"></div>
     </div>
     <div id="importSection">
+		<div class="help-link" >
+			<a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+			<img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
+		</div>
         <h3>What type of object should we create in Salesforce?</h3>
         <p id="import-message">
             Sorry, you cannot create {!LOWER(oppLabelPlural)}.
@@ -287,6 +303,10 @@ Written by Matt Yoder and Evan Callahan
         <div class="clear"></div>
     </div>
     <div id="resultsSection">
+		<div class="help-link" >
+			<a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+			<img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
+		</div>
         <h3>Import results</h3>
         <div id="results-grid-wrapper" class="grid-wrapper">
             <div id="results"></div>
@@ -294,11 +314,16 @@ Written by Matt Yoder and Evan Callahan
         <div class="clear"></div>
     </div>
 </div>
-<div align="center" style="height:80px; display:block; width:100%; padding:20px; text-align:center;" >
-    <div style="padding:10px; float:left; margin-left:40px;"><a href="http://www.eventbrite.com/r/gw" target="_blank" ><img src="{!URLFOR($Resource.EventbriteResources, 'images/eb_powered.png')}"/></a></div>
-    <div style="padding:10px; text-align:left; height:80px; font-family: Verdana; float:right; margin-right:40px;">
-        brought to you by<br /> 
-        <a href="http://groundwire.org/labs" target="_blank"><img src="{!URLFOR($Resource.EventbriteResources, 'images/GroundwireLogo.png')}"/></a>
+<div align="center" id="footer-section" >
+    <div class="footer-eb">
+    	<a href="http://www.eventbrite.com/r/gw" target="_blank" >
+    		<img width="90" height="51" src="{!URLFOR($Resource.EventbriteResources, 'images/eb_powered.png')}" />
+    	</a>
+    </div>	
+    <div class="footer-gw">
+        <a href="http://groundwire.org/" target="_blank">
+        	<img width="159" height="50" src="{!URLFOR($Resource.EventbriteResources, 'images/eventbrite_gw_footer.png')}" />
+        </a>
     </div>
 </div>
 
