@@ -122,7 +122,7 @@ Written by Matt Yoder and Evan Callahan
                 <label for="remember" id="remember-label"><input type="checkbox" name="remember" id="remember" value="" /> Remember my password</label>
                 <p id="signup">
                     Don&apos;t have an account?
-                    <a href="http://www.eventbrite.com/r/gw" target="_blank">Sign up for free</a>
+                    <a href="https://www.eventbrite.com/signup?ref=gw" target="_blank">Sign up for free</a>
                 </p>
             </div>
         </div>
