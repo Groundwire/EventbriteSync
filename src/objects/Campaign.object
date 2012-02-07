@@ -24,6 +24,7 @@
     <fields>
         <fullName>Eventbrite_Event_ID__c</fullName>
         <externalId>false</externalId>
+        <inlineHelpText>ID used by Eventbrite to uniquely identify an event.</inlineHelpText>
         <label>Eventbrite Event ID</label>
         <length>20</length>
         <required>false</required>
