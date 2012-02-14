@@ -32,6 +32,7 @@ function EventbriteImport($, settings, options) {
     importActionContactsOpps = $('#import-action-contacts-opps'),
     importAction = $('input[name="import-action"]'),
     importMessage = $('#import-message').hide(),
+    importMessagePerms = $('#import-message-permission'),
     importIndicator = $('#import-indicator').progressbar({value: 0}),
     matchContacts = $('#match-contacts'),
     contactDescription = $('#contact-description'),
@@ -498,15 +499,23 @@ function EventbriteImport($, settings, options) {
           }
           resetSelectionCache(attendeeContainer);
           attendeeGrid.setSelectedRows(rows);
-          if (duplicateOrderIds) {
-            importMessage.show();
+          if (importMessagePerms.length > 0) {
+            // The user does not have permission to create opportunities.
             importActionContactsOpps.button('disable');
             if (importAction.filter(':checked').val() === 'contacts-opps') {
               importActionContacts.click();
             }
           } else {
-            importMessage.hide();
-            importActionContactsOpps.button('enable');
+            if (duplicateOrderIds) {
+              importMessage.show();
+              importActionContactsOpps.button('disable');
+              if (importAction.filter(':checked').val() === 'contacts-opps') {
+                importActionContacts.click();
+              }
+            } else {
+              importMessage.hide();
+              importActionContactsOpps.button('enable');
+            }
           }
         } else {
           populateAttendeeList(eventId, attendeePage + 1, orderIds, duplicateOrderIds);
