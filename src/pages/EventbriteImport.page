@@ -235,7 +235,7 @@ Written by Matt Yoder and Evan Callahan
             <input type="radio" name="import-action" id="import-action-contacts-opps" value="contacts-opps" />
             <label for="import-action-contacts-opps">Create {!ContactLabelPlural} &amp; {!oppLabelPlural}</label>
         </div>
-        <fieldset>
+        <fieldset class="import-leads import-contacts import-contacts-opps">
             <legend>Configure <span class="import-type-text">{!ContactLabel}</span></legend>
             <div class="field-wrapper import-leads import-contacts import-contacts-opps">
                 <span class="form-label">Prevent Duplicates</span>
