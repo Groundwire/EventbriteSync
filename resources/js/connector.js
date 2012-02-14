@@ -928,6 +928,9 @@ function EventbriteImport($, settings, options) {
   
   /* Default settings */
   setDefaultSetting('gweb__Overwrite_Contact_Detail__c', false);
+  
+  oppStage.find('option[value=""]').remove();
+  setDefaultSetting('gweb__Opp_Stage__c', oppStage.find('option[value="Closed Won"]').val() || null);
 
   /* Initialize settings */
   simpleSetting(userkey, 'gweb__API_User_Key__c');
