@@ -393,10 +393,6 @@ Written by Matt Yoder and Evan Callahan
         <apex:outputLabel value="End Date" for="targetCampaign.EndDate" />
         <apex:inputField value="{!targetCampaign.EndDate}" />
     </div>
-    <div class="field-wrapper" id="campaign-parent-wrapper">
-        <apex:outputLabel value="Parent {!CampaignLabel}" for="targetCampaign.ParentId" />
-        <apex:inputField value="{!targetCampaign.ParentId}" />
-    </div>
     <div class="field-wrapper" id="campaign-description-wrapper">
         <label for="campaign-description">{!CampaignLabel} Description</label>
         <textarea id="campaign-description" name="campaign-description" rows="3" cols="48"></textarea>

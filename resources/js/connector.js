@@ -23,8 +23,6 @@ function EventbriteImport($, settings, options) {
     campaignNewStatus = $('#campaign-status-wrapper select'),
     campaignNewStart = $('#campaign-start-wrapper input').addClass('text ui-widget-content ui-corner-all'),
     campaignNewEnd = $('#campaign-end-wrapper input').addClass('text ui-widget-content ui-corner-all'),
-    campaignNewParent = $('#campaign-parent-wrapper input[type="hidden"]').eq(0),
-    campaignNewParentText = $('#campaign-parent-wrapper input[type="text"]').addClass('text ui-widget-content ui-corner-all'),
     campaignNewDescription = $('#campaign-description'),
     campaignNewButton = $('#campaign-create').button(),
     importButton = $('#import').button({disabled: true}),
@@ -675,8 +673,6 @@ function EventbriteImport($, settings, options) {
   };
   
   function extractCampaignArguments(callback) {
-    var parentId = campaignNewParent.val();
-    if (parentId === '000000000000000') parentId = null;
     return [
       campaignNewName.val(),
       campaignNewRecordType.filter(':checked').val() || null,
@@ -684,7 +680,7 @@ function EventbriteImport($, settings, options) {
       dateForSF(campaignNewStart.val()),
       dateForSF(campaignNewEnd.val()),
       campaignNewStatus.val() || null,
-      parentId,
+      null,
       campaignNewDescription.val(),
       callback
     ];
