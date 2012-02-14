@@ -232,6 +232,13 @@ function EventbriteImport($, settings, options) {
     }
   };
   
+  function setDefaultSetting(settingName, defaultValue) {
+    var current = settings[settingName];
+    if (current === '' || current === null || current === undefined) {
+      settings[settingName] = defaultValue;
+    }
+  };
+  
   function getImportArgs(eventJSON, attendees, campaignId, contactDescriptionValue, callback) {
     return [
       eventJSON,
@@ -922,6 +929,9 @@ function EventbriteImport($, settings, options) {
       $('#authenticate').focus().click();
     }
   });
+  
+  /* Default settings */
+  setDefaultSetting('gweb__Overwrite_Contact_Detail__c', false);
 
   /* Initialize settings */
   simpleSetting(userkey, 'gweb__API_User_Key__c');
