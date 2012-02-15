@@ -3,6 +3,7 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>Eventbrite_Answers__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Text of attendee custom questions and answers, if any.</inlineHelpText>
         <label>Eventbrite Answers</label>
@@ -12,6 +13,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Attendees_Checked_In__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Number of attendees who were checked in for the event via Eventbrite mobile app or website.</inlineHelpText>
         <label>Eventbrite Attendees Checked In</label>
@@ -23,6 +25,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Barcodes__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>One or more Eventbrite barcodes for this campaign member, separated by semicolons.</inlineHelpText>
         <label>Eventbrite Barcodes</label>
@@ -32,6 +35,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Checkins__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Barcodes for this campaign member that were checked-in, separated by semicolons.</inlineHelpText>
         <label>Eventbrite Barcodes Checked In</label>
@@ -41,6 +45,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Date_and_Time__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Date and time of the Eventbrite event for this ticket.</inlineHelpText>
         <label>Eventbrite Date and Time</label>
@@ -49,6 +54,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Ticket_Quantity__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Number of tickets registered to this attendee.</inlineHelpText>
         <label>Eventbrite Ticket Quantity</label>
@@ -60,6 +66,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Ticket_Type__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Type of Eventbrite ticket(s) ordered by this attendee.</inlineHelpText>
         <label>Eventbrite Ticket Type</label>

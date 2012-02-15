@@ -3,6 +3,7 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>Eventbrite_Attendees_Checked_In__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Sum total of checked-in attendees among Eventbrite campaign members.</inlineHelpText>
         <label>Eventbrite Attendees Checked-In</label>
@@ -13,6 +14,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Attendees_Registered__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Total number of registered (ticketed) attendees among Eventbrite campaign members.</inlineHelpText>
         <label>Eventbrite Attendees Registered</label>
@@ -23,6 +25,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Event_ID__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>ID used by Eventbrite to uniquely identify an event.</inlineHelpText>
         <label>Eventbrite Event ID</label>
@@ -33,6 +36,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Link__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>IF(ISNULL(Eventbrite_Event_ID__c), NULL, HYPERLINK(&apos;http://www.eventbrite.com/myevent?eid=&apos;+ Eventbrite_Event_ID__c , &apos;View in Eventbrite&apos;, &apos;_blank&apos;))</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>

@@ -5,6 +5,7 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>API_User_Key__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>API User Key</label>
         <length>100</length>
@@ -14,6 +15,7 @@
     </fields>
     <fields>
         <fullName>Campaign_Member_Status__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Campaign Member Status</label>
         <length>100</length>
@@ -23,6 +25,7 @@
     </fields>
     <fields>
         <fullName>Campaign_Record_Type_for_New_Campaigns__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Campaign Record Type for New Campaigns</label>
         <length>100</length>
@@ -32,6 +35,7 @@
     </fields>
     <fields>
         <fullName>Campaign_Status__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Campaign Status</label>
         <length>100</length>
@@ -41,6 +45,7 @@
     </fields>
     <fields>
         <fullName>Campaign_Type_for_New_Campaigns__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Campaign Type for New Campaigns</label>
         <length>100</length>
@@ -51,6 +56,7 @@
     <fields>
         <fullName>Create_Accounts__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>If checked, we will create new accounts when company name is not unrecognized.</inlineHelpText>
         <label>Create Accounts</label>
@@ -59,12 +65,14 @@
     <fields>
         <fullName>Create_Opps_for_Free_Tickets__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Create Opportunities for Free Tickets</label>
         <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Lead_Source__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Lead Source</label>
         <length>100</length>
@@ -74,6 +82,7 @@
     </fields>
     <fields>
         <fullName>Opp_Contact_Role__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Opp Contact Role</label>
         <length>100</length>
@@ -83,6 +92,7 @@
     </fields>
     <fields>
         <fullName>Opp_Record_Type_Id__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Opp Record Type Id</label>
         <length>18</length>
@@ -93,6 +103,7 @@
     <fields>
         <fullName>Opp_Stage__c</fullName>
         <defaultValue>&quot;Closed Won&quot;</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Opp Stage</label>
         <length>100</length>
@@ -102,6 +113,7 @@
     </fields>
     <fields>
         <fullName>Option_for_Campaign__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>0 = Existing Campaign, 1 = New Campaign, 2 = No Campaign</inlineHelpText>
         <label>Option for Campaign</label>
@@ -113,6 +125,7 @@
     </fields>
     <fields>
         <fullName>Option_for_Leads_or_Contacts__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>0 = Create Leads, 1 = Create Contacts, 2 = Create Contacts and Opps</inlineHelpText>
         <label>Option for Leads or Contacts</label>
@@ -125,6 +138,7 @@
     <fields>
         <fullName>Overwrite_Contact_Detail__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Update contact phone and address from Eventbrite even when they already have values in Salesforce.</inlineHelpText>
         <label>Overwrite Contact Detail</label>
@@ -132,6 +146,7 @@
     </fields>
     <fields>
         <fullName>Password__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Password</label>
         <length>100</length>
@@ -142,12 +157,14 @@
     <fields>
         <fullName>Use_Existing_Contact__c</fullName>
         <defaultValue>true</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Use Existing Contact</label>
         <type>Checkbox</type>
     </fields>
     <fields>
         <fullName>Username__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Username</label>
         <length>100</length>

@@ -63,6 +63,7 @@
     <enableFeeds>true</enableFeeds>
     <fields>
         <fullName>Eventbrite_Attendee_IDs__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>One or more Eventbrite attendee ids for this campaign member, separated by semicolons.</inlineHelpText>
         <label>Eventbrite Attendee IDs</label>
@@ -73,6 +74,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Date_and_Time__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Date and time of the Eventbrite event for this purchase.</inlineHelpText>
         <label>Eventbrite Date and Time</label>
@@ -82,6 +84,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Discount__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Eventbrite Discount</label>
         <length>255</length>
@@ -92,6 +95,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Event_ID__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>ID used by Eventbrite to uniquely identify an event.</inlineHelpText>
         <label>Eventbrite Event ID</label>
@@ -103,6 +107,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Order_ID__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>ID used by Eventbrite to uniquely identify a ticket order.</inlineHelpText>
         <label>Eventbrite Order ID</label>
@@ -114,6 +119,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Order_Link__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>IF(ISNULL(Eventbrite_Order_ID__c), NULL, HYPERLINK(&apos;http://www.eventbrite.com/reports?eid=&apos; &amp; Eventbrite_Event_ID__c &amp; &apos;&amp;filterby=all,&apos; &amp; Eventbrite_Order_ID__c, &apos;View in Eventbrite&apos;, &apos;_blank&apos;))</formula>
         <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
@@ -124,6 +130,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Ticket_Id__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>ID used by Eventbrite to uniquely identify a ticket.</inlineHelpText>
         <label>Eventbrite Ticket ID</label>
@@ -135,6 +142,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Ticket_Quantity__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Number of tickets registered to this order.</inlineHelpText>
         <label>Eventbrite Ticket Quantity</label>
@@ -147,6 +155,7 @@
     </fields>
     <fields>
         <fullName>Eventbrite_Ticket_Type__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <inlineHelpText>Type of Eventbrite ticket(s) ordered.</inlineHelpText>
         <label>Eventbrite Ticket Type</label>
