@@ -42,6 +42,8 @@ global with sharing class EventbriteImportController {
 	public list<selectOption> CampaignRecordTypes { get; private set; }
 	public list<selectOption> OppRecordTypes { get; private set; }
 	public boolean canCreateCampaigns { get; private set; }
+	public boolean canCreateContacts { get; private set; }
+	public boolean canCreateOpps { get; private set; }
 
 	public string accountLabelPlural { get; private set; }
 	public string contactLabel { get; private set; }
@@ -104,6 +106,11 @@ global with sharing class EventbriteImportController {
 		defaultContact = new Contact();
 		
 		canCreateCampaigns = Describe.getObjectDescribe('Campaign').isCreateable();
+		Schema.DescribeSObjectResult conDesc = Describe.getObjectDescribe('Contact');
+		Schema.DescribeSObjectResult leadDesc = Describe.getObjectDescribe('Lead');
+		canCreateContacts = conDesc.isCreateable() && conDesc.isUpdateable() && 
+			leadDesc.isCreateable() && leadDesc.isUpdateable();
+		canCreateOpps = oppDesc.isCreateable() && oppDesc.isUpdateable();
 	}
 	
 	@RemoteAction
