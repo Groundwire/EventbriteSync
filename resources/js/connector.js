@@ -413,7 +413,8 @@ function EventbriteImport($, settings, options) {
     if (args.searchTerm != "") {
       var text = '';
       for (var c = 0; c < args.searchCols.length; c++) {
-        text += ' ' + item[args.searchCols[c]].toLowerCase();
+        if (item[args.searchCols[c]])
+          text += ' ' + item[args.searchCols[c]].toLowerCase();
       }
       var terms = args.searchTerm.toLowerCase().split(' ');
       for (var i = 0; i < terms.length; i++) {
