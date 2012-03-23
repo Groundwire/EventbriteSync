@@ -355,6 +355,7 @@ global with sharing class EventbriteImportController {
 					phone = eba.work_phone,
 					mobilePhone = eba.cell_phone,
 					title = eba.job_title,
+					leadSource = settings.Lead_Source__c,
 					description = contactDescription
 				);
 				leadInsertIndexes.add(i);
@@ -413,6 +414,7 @@ global with sharing class EventbriteImportController {
 						lastName = eba.last_name,
 						email = eba.email,
 						description = contactDescription,
+						leadSource = settings.Lead_Source__c,
 						accountid = accountNameMap.get(eba.company)
 					);
 					contactUpsertIndexes.add(i);
