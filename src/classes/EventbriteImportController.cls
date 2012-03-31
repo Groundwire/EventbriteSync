@@ -1,6 +1,6 @@
 global with sharing class EventbriteImportController {
 /*-----------------------------------------------------------------------------------------------
-* Visualforce controller class for Eventbrite for Salesforce 
+* Visualforce controller class for Eventbrite Sync 
 * Written by Evan Callahan
 
       Copyright (c) 2012, Groundwire Consulting, Inc.

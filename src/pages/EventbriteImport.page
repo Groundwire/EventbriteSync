@@ -1,6 +1,6 @@
 <apex:page controller="EventbriteImportController" title="Eventbrite Import" showHeader="true" sidebar="false" id="pg" >
 <!--
-Visualforce Page - Eventbrite for Salesforce
+Visualforce Page - Eventbrite Sync
 Written by Matt Yoder and Evan Callahan
 
       Copyright (c) 2012, Groundwire Consulting, Inc.
@@ -95,7 +95,7 @@ Written by Matt Yoder and Evan Callahan
     </ul>
     <div id="login-section">
         <div class="help-link" >
-            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite Sync User's Guide" >
             <img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
         </div>
         <apex:outputPanel rendered="{!NOT(canCreateContacts)}" >
@@ -143,7 +143,7 @@ Written by Matt Yoder and Evan Callahan
     </div>
     <div id="eventSection">
         <div class="help-link" >
-            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite Sync User's Guide" >
             <img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
         </div>
         <div id="events-wrapper">
@@ -183,7 +183,7 @@ Written by Matt Yoder and Evan Callahan
     </div>
     <div id="campaignSection">
         <div class="help-link" >
-            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite Sync User's Guide" >
             <img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
         </div>
         <h3>What do you want to do?</h3>
@@ -227,7 +227,7 @@ Written by Matt Yoder and Evan Callahan
     </div>
     <div id="importSection">
         <div class="help-link" >
-            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite Sync User's Guide" >
             <img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
         </div>
         <h3>What type of object should we create in Salesforce?</h3>
@@ -320,7 +320,7 @@ Written by Matt Yoder and Evan Callahan
     </div>
     <div id="resultsSection">
         <div class="help-link" >
-            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite for Salesforce User's Guide" >
+            <a href="http://groundwire.org/apps/eventbrite-for-salesforce/users-guide" target="_blank" title="Eventbrite Sync User's Guide" >
             <img width="19" height="21" src="{!URLFOR($Resource.EventbriteResources, 'images/help_icon.png')}" /><span>Help</span></a>
         </div>
         <h3>Import results</h3>
