@@ -235,11 +235,12 @@ global with sharing class EventbriteImportController {
 			oppFieldNames = Describe.getAllFieldNames('Opportunity');					
 
 		// query for matches - map emails to matched contacts
-		map<id, contact> contactIdMatchMap = new map<id, contact>();
 		map<string, contact> contactMatchMap = new map<string, contact>();
+		//map<id, contact> contactIdMatchMap = new map<id, contact>();
 		set<id> contactMatches = new set<id>();
-		string otherEmail;
 		if (settings.use_existing_contact__c) {
+
+			string otherEmail;
 
 			// for gwbase we want to check secondary email too
 			if (contactFieldNames.contains('GWBase__Secondary_Email__c'))
@@ -256,7 +257,7 @@ global with sharing class EventbriteImportController {
 			matchQuery += 'order by lastModifiedDate';
 
 			for (contact c : database.query(matchQuery)) {
-				contactIdMatchMap.put(c.id, c);
+				//contactIdMatchMap.put(c.id, c);
 				if (attendeeEmails.contains(c.email)) {
 					contactMatchMap.put(c.email, c);
 					contactMatches.add(c.id);
@@ -265,6 +266,28 @@ global with sharing class EventbriteImportController {
 					contactMatches.add(c.id);
 				}
 			}
+		}
+			
+		// also look for matching leads if we are importing leads
+		map<string, lead> leadMatchMap = new map<string, lead>();
+		//map<id, lead> leadIdMatchMap = new map<id, contact>();
+		set<id> leadMatches = new set<id>();	
+		if (settings.use_existing_contact__c && settings.Option_for_Leads_or_Contacts__c == 0) {
+
+			string matchQuery = 'select id, name, firstname, lastname, title, email, street, salutation, company, mobilePhone, phone';
+			if (leadFieldNames.contains('GWBase__Home_Phone__c'))
+				matchQuery += ', GWBase__Home_Phone__c, GWBase__Home_Street__c';
+			else if (leadFieldNames.contains('Home_Phone__c'))
+				matchQuery += ', Home_Phone__c';
+			matchQuery += ' from lead where email in :attendeeEmails order by lastModifiedDate';
+				
+			for (lead c : database.query(matchQuery)) {
+				//leadIdMatchMap.put(c.id, c);
+				if (attendeeEmails.contains(c.email)) {
+					leadMatchMap.put(c.email, c);
+					leadMatches.add(c.id);
+				}
+			}			
 		}
 		
 		// map the existing account names
@@ -302,7 +325,7 @@ global with sharing class EventbriteImportController {
 			for (campaignMember cm : 
 				[select id, campaignId, leadId, contactId, status, eventbrite_barcodes__c, Eventbrite_Checkins__c, 
 					eventbrite_ticket_type__c, eventbrite_ticket_quantity__c from campaignMember 
-					where campaignId = : campaignId and contactId in : contactMatches]) {
+					where campaignId = : campaignId and (contactId in : contactMatches or leadId in : leadMatches)]) {
 						
 				memberMap.put((cm.contactId == null) ? cm.leadId : cm.contactId, cm);
 			}
@@ -322,16 +345,17 @@ global with sharing class EventbriteImportController {
 		}
 
 		// create lists for later update or insert
-		list<lead> leadsToInsert = new list<lead>();
+		list<lead> leadsToUpsert = new list<lead>();
 		list<contact> contactsToUpsert = new list<contact>();
 
 		// for each DML list, need to track the indexes of the records we are sending
 		// so we can always match results back to the right attendee record 
-		list<integer> leadInsertIndexes = new list<integer>();
+		list<integer> leadUpsertIndexes = new list<integer>();
 		list<integer> contactUpsertIndexes = new list<integer>();
 
 		// use an id set to make sure we don't duplicate contacts
 		set<id> conSet = new set<id>();
+		set<id> leadSet = new set<id>();
 		
 		// are these still required?
 		map<integer, lead> indexLeadMap = new map<integer, lead>();
@@ -343,7 +367,7 @@ global with sharing class EventbriteImportController {
 			Eventbrite.Attendee eba = ebaList[i]; 
 			
 			if (settings.Option_for_Leads_or_Contacts__c == 0 && 
-				(!settings.Use_Existing_Contact__c || !contactMatchMap.containsKey(eba.email))) {
+				(!settings.Use_Existing_Contact__c || (!contactMatchMap.containsKey(eba.email) && !leadMatchMap.containsKey(eba.email)))) {
 
 				// create a lead
 				lead l = new lead(
@@ -358,8 +382,8 @@ global with sharing class EventbriteImportController {
 					leadSource = settings.Lead_Source__c,
 					description = contactDescription
 				);
-				leadInsertIndexes.add(i);
-				leadsToInsert.add(l);
+				leadUpsertIndexes.add(i);
+				leadsToUpsert.add(l);
 				indexLeadMap.put(i, l);
 								
 				if (leadFieldNames.contains('GWBase__Home_Phone__c')) {
@@ -394,8 +418,69 @@ global with sharing class EventbriteImportController {
 					fillAddress(eba.home_address, (sobject)l, null, false);
 				}
 				
-			} else {
-				
+			} else if (settings.Option_for_Leads_or_Contacts__c == 0 && settings.Use_Existing_Contact__c &&
+				!contactMatchMap.containsKey(eba.email) && leadMatchMap.containsKey(eba.email)) {
+					
+				// update matching lead	
+				lead l = leadMatchMap.get(eba.email);
+				boolean overwrite = settings.Overwrite_Contact_Detail__c;
+
+				if (l.id != null && !leadSet.contains(l.id)) {
+					leadUpsertIndexes.add(i);						
+					leadsToUpsert.add(l);
+					leadSet.add(l.id);
+					indexLeadMap.put(i, l);
+				}
+
+				// fill lead fields if they are null
+				if (l.salutation == null || (overwrite && eba.prefix != null))
+					l.salutation = eba.prefix;
+				if (l.title == null || (overwrite && eba.job_title != null))
+					l.title = eba.job_title;
+				if (l.phone == null || (overwrite && eba.work_phone != null))
+					l.phone = eba.work_phone;
+				if (l.mobilePhone == null || (overwrite && eba.cell_phone != null))
+					l.mobilePhone = eba.cell_phone;					
+			
+				if (leadFieldNames.contains('GWBase__Home_Phone__c')) {
+					if (l.get('GWBase__Home_Phone__c') == null || (overwrite && eba.home_phone != null))
+						l.put('GWBase__Home_Phone__c', eba.home_phone);
+					if (l.get('GWBase__Home_Street__c') == null || (overwrite && eba.home_address != null)) {
+						l.put('GWBase__Home_Street__c', eba.home_address.address);
+						l.put('GWBase__Home_City__c', eba.home_address.city);
+						l.put('GWBase__Home_State__c', eba.home_address.region);
+						l.put('GWBase__Home_PostalCode__c', eba.home_address.postal_code);
+						l.put('GWBase__Home_Country__c', eba.home_address.country);
+					}
+					if (eba.amount_paid != null) {
+						l.put('GWBase__Opportunity_Amount__c', eba.amount_paid);
+						l.put('GWBase__Opportunity_Date__c', eba.created.date());
+						l.put('GWBase__Opportunity_Description__c', 'Eventbrite Order - ' + ebEvent.title);
+						l.put('GWBase__Opportunity_Record_Type__c', OppRecordTypeId);
+						l.put('GWBase__Opportunity_Stage__c', settings.opp_stage__c);
+					}
+
+				} else if (leadFieldNames.contains('Home_Phone__c')) {
+					if (l.get('Home_Phone__c') == null || (overwrite && eba.home_phone != null))
+						l.put('Home_Phone__c', eba.home_phone);
+					if (leadFieldNames.contains('Opportunity_Description__c') && eba.amount_paid != null) {
+						l.put('Opportunity_Amount__c', eba.amount_paid);
+						l.put('Opportunity_Date__c', eba.created.date());
+						l.put('Opportunity_Description__c', 'Eventbrite Order - ' + ebEvent.title);
+						l.put('Opportunity_Record_Type__c', OppRecordTypeId);
+						l.put('Opportunity_Stage__c', settings.opp_stage__c);
+					}
+				} else if (l.phone == null) {
+					l.phone = eba.home_phone;
+				}
+
+				if (eba.work_address != null) {
+					fillAddress(eba.work_address, (sobject)l, null, overwrite);				
+				} else if (eba.home_address != null && !leadFieldNames.contains('GWBase__Home_Phone__c')) {
+					fillAddress(eba.home_address, (sobject)l, null, overwrite);
+				}
+					
+			} else {	
 				// create or update a contact
 				contact c;
 				if (contactMatchMap.containsKey(eba.email)) { 
@@ -455,14 +540,14 @@ global with sharing class EventbriteImportController {
 		}
 		
 		// insert or update, mapping the results by the index of the attendee import record
-		map<integer, database.saveResult> leadResultMap = new map<integer, database.saveResult>();
+		map<integer, database.upsertResult> leadResultMap = new map<integer, database.upsertResult>();
 		map<integer, database.upsertResult> contactResultMap = new map<integer, database.upsertResult>();
-		if (!leadsToInsert.isEmpty()) {
-			//system.debug(logginglevel.warn, leadsToInsert);
-			list<database.saveResult> res = database.insert(leadsToInsert, false);
+		if (!leadsToUpsert.isEmpty()) {
+			//system.debug(logginglevel.warn, leadsToUpsert);
+			list<database.UpsertResult> res = database.upsert(leadsToUpsert, false);
 			//system.debug(logginglevel.warn, res);
 			for (integer i = 0; i < res.size(); i++)
-				leadResultMap.put(leadInsertIndexes[i], res[i]);
+				leadResultMap.put(leadUpsertIndexes[i], res[i]);
 		}
 		if (!contactsToUpsert.isEmpty()) {
 			//system.debug(logginglevel.warn, contactsToUpsert);
@@ -703,11 +788,13 @@ global with sharing class EventbriteImportController {
 			ImportAttendeeResult r = new ImportAttendeeResult();
 			if (indexLeadMap.containsKey(i)) {
 				lead l = indexLeadMap.get(i);		
-				database.SaveResult leadResult = leadResultMap.get(i);
+				database.UpsertResult leadResult = leadResultMap.get(i);
 				if (leadResult == null) {
 					r.summary = 'Error! No ' + leadLabel + ' was created. ';
 				} else if (leadResult.isSuccess()) {
-					r.summary = 'Created ' + leadLabel + '. ';
+					r.summary = leadResult.isCreated() ? 
+						'Created ' + leadLabel + '. ' : 
+						'Updated matching ' + leadLabel + '. ';
 					r.firstname = l.firstname;
 					r.lastname = l.lastname;
 					r.link = '/' + l.id;
@@ -883,10 +970,14 @@ global with sharing class EventbriteImportController {
 		CreateCampaignResult ccr = eventbriteImportController.createCampaign('foo',null,null,system.today(),null, 'In Progress', null, null);
 		list<string> cs = getCampaignMemberStatuses(ccr.campaignId);
 		
+		lead testLead = new lead(lastname = 'YoderTEST', firstname = 'Bob', company = 'no-co', email = 'yoder+bob@groundwire.org');
+		insert testLead;
+
 		string oneEvent = '{"box_header_text_color": "005580", "link_color": "EE6600", "box_background_color": "FFFFFF", "timezone": "US/Pacific", "box_border_color": "D5D5D3", "logo": "http://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "organizer": {"url": "http://www.eventbrite.com/org/515399719", "description": "", "id": 515399719, "name": ""}, "background_color": "FFFFFF", "id": 586701841, "category": "", "box_header_background_color": "EFEFEF", "capacity": 5000, "num_attendee_rows": 5, "title": "Test Free Event", "start_date": "2011-02-16 13:00:00", "status": "Completed", "description": "", "end_date": "2011-02-16 16:00:00", "tags": "", "text_color": "005580", "title_text_color": "", "tickets": [{"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "0.00", "quantity_sold": 7, "visible": "true", "currency": "USD", "quantity_available": 20, "type": 0, "id": 9196395, "name": "Free Ticket"}}, {"ticket": {"description": "", "end_date": "2011-02-16 10:00:00", "min": 0, "max": 0, "price": "50.00", "quantity_sold": 0, "visible": "true", "currency": "USD", "quantity_available": 100, "type": 0, "id": 9960065, "name": "Ticket plus Donation"}}], "created": "2010-02-24 10:55:06", "url": "http://www.eventbrite.com/event/586701841", "box_text_color": "000000", "privacy": "Public", "venue": {"city": "Seattle", "name": "Groundwire", "country": "United States", "region": "WA", "longitude": -122.336787, "postal_code": "98101", "address_2": "", "address": "1402 3rd Ave", "latitude": 47.609093000000001, "country_code": "US", "id": 422693, "Lat-Long": "47.609093 / -122.336787"}, "modified": "2011-02-16 20:30:34", "logo_ssl": "https://evbdn.eventbrite.com/s3-s3/eventlogos/3467546/586701841-1.png", "repeats": "no"}';
 		list<string> attendees = new list<string>{
 			'{"last_name": "CallahanTEST", "home_address": "", "suffix": "", "home_postal_code": "98236", "currency": "USD", "prefix": "", "id": 17348011, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "evan+bobtest@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "", "order_id": 13070182, "company": "", "barcode": "1307018217348011001,1307018217348011002", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "", "cell_phone": "765.4848x89", "notes": "", "quantity": 2}',
-			'{"last_name": "MagnusonTEST", "home_address": "123 4th", "suffix": "", "home_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348012, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "#1234", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "eric+bob@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "Seattle", "order_id": 13070182, "company": "", "barcode": "1307018217348011003", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "6/28/1980", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 1}'
+			'{"last_name": "MagnusonTEST", "home_address": "123 4th", "suffix": "", "home_postal_code": "98115", "currency": "USD", "prefix": "", "id": 17348012, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "#1234", "blog": "", "ticket_id": 9196395, "home_phone": "", "event_date": "", "email": "eric+bob@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "Seattle", "order_id": 13070182, "company": "", "barcode": "1307018217348011003", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "6/28/1980", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 1}',
+			'{"last_name": "YoderTEST", "home_address": "123 4th", "suffix": "", "home_postal_code": "98101", "currency": "USD", "prefix": "", "id": 17348013, "first_name": "Bob", "order_type": "Free Order", "event_id": 586701841, "home_address_2": "#1234", "blog": "", "ticket_id": 9196396, "home_phone": "", "event_date": "", "email": "yoder+bob@groundwire.org", "job_title": "", "website": "", "home_country_code": "US", "home_city": "Seattle", "order_id": 13070183, "company": "", "barcode": "1307018217348011004", "home_region": "WA", "discount": "", "amount_paid": "0.00", "home_country": "US", "created": "2010-06-28 01:47:35", "gender": "", "age": "", "modified": "2010-06-28 01:48:07", "affiliate": "", "birth_date": "6/28/1980", "cell_phone": "765.4848x89", "notes": "Testing", "quantity": 1}'
 		};
 		
 		string leadLabel = Describe.getObjectLabel('Lead').toLowerCase();
@@ -896,15 +987,18 @@ global with sharing class EventbriteImportController {
 				'Created from Eventbrite Event',  null, null, '12664528613477948638', 0, true, true, 'Phone Inquiry',
 				true, 0, 'Responded', null, null, null, false);			
 
-		system.assertEquals(2, result.size());
+		system.assertEquals(3, result.size());
 		system.assertEquals('Created ' + leadLabel + '. ', result[0].summary);
 		system.assertEquals('CallahanTEST', result[0].lastname);
+		system.assertEquals('Created ' + leadLabel + '. ', result[1].summary);
+		system.assertEquals('Updated matching ' + leadLabel + '. ', result[2].summary);
 		
-		list<campaignMember> cm = [select id, status, lead.postalcode from campaignmember where campaign.id =: ccr.CampaignId];
-		system.assertEquals(2, cm.size());
+		list<campaignMember> cm = [select id, status, lead.postalcode from campaignmember where campaign.id =: ccr.CampaignId order by lead.lastname];
+		system.assertEquals(3, cm.size());
 		system.assertEquals('Responded', cm[0].status);
 		system.assertEquals('98236', cm[0].lead.postalcode);
 		system.assertEquals('98115', cm[1].lead.postalcode);
+		system.assertEquals('98101', cm[2].lead.postalcode);
 		
 		list<opportunity> oo = [select id, name, campaignId from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(0, oo.size());		

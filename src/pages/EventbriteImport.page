@@ -253,7 +253,12 @@ Written by Matt Yoder and Evan Callahan
         </div>
         <fieldset class="import-leads import-contacts import-contacts-opps">
             <legend>Configure <span class="import-type-text">{!ContactLabel}</span></legend>
-            <div class="field-wrapper import-leads import-contacts import-contacts-opps">
+            <div class="field-wrapper import-leads">
+                <span class="form-label">Prevent Duplicates</span>
+                <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
+                <label for="match-contacts" class="checkbox-label" >Use existing {!LOWER(ContactLabel)} or {!LOWER(LeadLabel)} where email matches.</label>
+            </div>
+            <div class="field-wrapper import-contacts import-contacts-opps">
                 <span class="form-label">Prevent Duplicates</span>
                 <input type="checkbox" name="match-contacts" id="match-contacts" value="match" checked="checked" />
                 <label for="match-contacts" class="checkbox-label" >Use existing {!LOWER(ContactLabel)} where email matches.</label>
@@ -271,7 +276,7 @@ Written by Matt Yoder and Evan Callahan
                 <input type="checkbox" name="create-accounts" id="create-accounts" value="create" checked="" />
                 <label for="create-accounts" class="checkbox-label" >Create {!LOWER(AccountLabelPlural)} for unrecognized company names.</label>
             </div>
-            <div class="field-wrapper import-contacts import-contacts-opps">
+            <div class="field-wrapper import-leads import-contacts import-contacts-opps">
                 <span class="form-label">Update {!ContactLabel} Info</span>
                 <div class="form-field">
                     <div class="radio-wrapper">
