@@ -805,8 +805,10 @@ global with sharing class EventbriteImportController {
 				} else {
 					list<database.Error> errs = leadResult.getErrors();
 					r.summary = 'Failed to create ' + leadLabel + '; ';
-					for (database.error err : errs) 
+					for (database.error err : errs) { 
 						r.summary += err.getMessage() + ' ';
+						system.debug(logginglevel.warn, err.getMessage());
+					}
 				}
 			} else if (indexContactMap.containsKey(i)) {
 				contact c = indexContactMap.get(i);		
@@ -846,8 +848,10 @@ global with sharing class EventbriteImportController {
 					} else {
 						list<database.Error> errs = oppResult.getErrors();
 						r.summary += 'Failed to create ' + oppLabel + '; ';
-						for (database.error err : errs) 
+						for (database.error err : errs) { 
 							r.summary += err.getMessage() + ' ';
+							system.debug(logginglevel.warn, err.getMessage());
+						}
 					}
 				}
 			} else {
@@ -960,7 +964,6 @@ global with sharing class EventbriteImportController {
 		system.assertEquals('GroundwireTEST', cm[1].contact.account.name);
 		system.assertEquals('GroundwireTEST', cm[2].contact.account.name);
 		system.assertEquals('123 4th', cm[2].contact.account.billingstreet);
-		system.assertEquals(null, cm[3].contact.account.name);
 		
 		oo = [select id, name, description, campaignId from opportunity where campaignId =: ccr.campaignId];
 		system.assertEquals(3, oo.size());
