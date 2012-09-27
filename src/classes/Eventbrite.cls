@@ -31,10 +31,6 @@ public with sharing class Eventbrite {
       ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
       POSSIBILITY OF SUCH DAMAGE.
 
-
-* So far, supports the JSON response from the following Eventbrite API calls:
-*   - userListEvents
-*   - eventListAttendees
 *-----------------------------------------------------------------------------------------------*/
 
 	public class Event {
@@ -270,9 +266,17 @@ public with sharing class Eventbrite {
 		            } else if (fn == 'password') {
 		            	ev.password = jp.getText();
 		            } else if (fn == 'capacity') {
-		            	ev.capacity = jp.getIntegerValue();
+		            	try {
+		            		ev.capacity = jp.getIntegerValue();
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set event capacity to ' + jp.getText());
+	                  }
 		            } else if (fn == 'num_attendee_rows') {  
-		            	ev.num_attendee_rows = jp.getIntegerValue();
+		            	try {
+		            		ev.num_attendee_rows = jp.getIntegerValue();
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set event num_attendee_rows to ' + jp.getText());
+	                  }
 		            } else if (fn == 'repeats') {
 		            	ev.repeats = jp.getText();
 		            } else if (fn == 'status') {
@@ -335,35 +339,39 @@ public with sharing class Eventbrite {
 	            String fn = jp.getText();
 	            jp.nextToken();
 	            if (jp.getCurrentToken() != JSONToken.VALUE_NULL && jp.getText() != '') {
-		            if (fn == 'id') {
-		            	tkt.id = string.valueOf(jp.getLongValue());
-		            } else if (fn == 'name') {
-		            	tkt.name = jp.getText();
-		            } else if (fn == 'description') {
-		            	tkt.description = jp.getText();
-		            } else if (fn == 'type') {
-		            	tkt.type = jp.getIntegerValue();
-		            } else if (fn == 'price') {
-		            	tkt.price = jp.getDecimalValue();
-		            } else if (fn == 'currency') {
-		            	tkt.currency_code = jp.getText();
-		            } else if (fn == 'max') {
-		            	tkt.max = jp.getIntegerValue();
-		            } else if (fn == 'min') {
-		            	tkt.min = jp.getIntegerValue();
-		            } else if (fn == 'start_date') {
-		            	tkt.start_date = datetime.valueOfGmt(jp.getText());
-		            } else if (fn == 'end_date') {
-		            	tkt.end_date = datetime.valueOfGmt(jp.getText());
-		            } else if (fn == 'quantity_available') {
-		            	tkt.quantity_available = jp.getIntegerValue();
-		            } else if (fn == 'quantity_sold') {
-		            	tkt.quantity_sold = jp.getIntegerValue();
-		            } else if (fn == 'visible') {
-		            	tkt.visible = (jp.getText() == 'true');
-		            } else {
-						ignoreBadProperty( jp, fn );
-		            }
+						try {	            	
+			            if (fn == 'id') {
+			            	tkt.id = string.valueOf(jp.getLongValue());
+			            } else if (fn == 'name') {
+			            	tkt.name = jp.getText();
+			            } else if (fn == 'description') {
+			            	tkt.description = jp.getText();
+			            } else if (fn == 'type') {
+			            	tkt.type = jp.getIntegerValue();
+			            } else if (fn == 'price') {
+			            	tkt.price = jp.getDecimalValue();
+			            } else if (fn == 'currency') {
+			            	tkt.currency_code = jp.getText();
+			            } else if (fn == 'max') {
+			            	tkt.max = jp.getIntegerValue();
+			            } else if (fn == 'min') {
+			            	tkt.min = jp.getIntegerValue();
+			            } else if (fn == 'start_date') {
+			            	tkt.start_date = datetime.valueOfGmt(jp.getText());
+			            } else if (fn == 'end_date') {
+			            	tkt.end_date = datetime.valueOfGmt(jp.getText());
+			            } else if (fn == 'quantity_available') {
+			            	tkt.quantity_available = jp.getIntegerValue();
+			            } else if (fn == 'quantity_sold') {
+			            	tkt.quantity_sold = jp.getIntegerValue();
+			            } else if (fn == 'visible') {
+			            	tkt.visible = (jp.getText() == 'true');
+			            } else {
+								ignoreBadProperty( jp, fn );
+			            }
+                  } catch (exception e) { 
+                  	system.debug(LoggingLevel.WARN, 'Could not set ticket ' + fn + ' to ' + jp.getText());
+                  }
 	            }
 	        }
 	    }						
@@ -401,40 +409,44 @@ public with sharing class Eventbrite {
 	            String fn = jp.getText();
 	            jp.nextToken();
 	            if (jp.getCurrentToken() != JSONToken.VALUE_NULL && jp.getText() != '') {
-		            if (fn == 'id') {
-		            	vnu.id = string.valueOf(jp.getLongValue());
-		            } else if (fn == 'name') {
-		            	vnu.name = jp.getText();
-		            } else if (fn == 'address') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.address = (vnu.location.address != null) ? (jp.getText() + '\n' + vnu.location.address) : jp.getText();
-		            } else if (fn == 'address_2') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.address = (vnu.location.address != null) ? (vnu.location.address + '\n' +  jp.getText()) : jp.getText();
-		            } else if (fn == 'city') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.city = jp.getText();
-		            } else if (fn == 'region') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.region = jp.getText();
-		            } else if (fn == 'postal_code') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.postal_code = jp.getText();
-		            } else if (fn == 'country') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.country = jp.getText();
-		            } else if (fn == 'country_code') {
-		            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
-		            	vnu.location.country_code = jp.getText();
-		            } else if (fn == 'Lat-Long') {
-		            	vnu.lat_long = jp.getText();
-		            } else if (fn == 'longitude') {
-		            	vnu.longitude = jp.getDecimalValue();
-		            } else if (fn == 'latitude') {
-		            	vnu.latitude = jp.getDecimalValue();
-		            } else {
-						ignoreBadProperty( jp, fn );
-		            }
+	            	try {
+			            if (fn == 'id') {
+			            	vnu.id = string.valueOf(jp.getLongValue());
+			            } else if (fn == 'name') {
+			            	vnu.name = jp.getText();
+			            } else if (fn == 'address') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.address = (vnu.location.address != null) ? (jp.getText() + '\n' + vnu.location.address) : jp.getText();
+			            } else if (fn == 'address_2') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.address = (vnu.location.address != null) ? (vnu.location.address + '\n' +  jp.getText()) : jp.getText();
+			            } else if (fn == 'city') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.city = jp.getText();
+			            } else if (fn == 'region') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.region = jp.getText();
+			            } else if (fn == 'postal_code') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.postal_code = jp.getText();
+			            } else if (fn == 'country') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.country = jp.getText();
+			            } else if (fn == 'country_code') {
+			            	if (vnu.location == null) vnu.location = new Eventbrite.Address();
+			            	vnu.location.country_code = jp.getText();
+			            } else if (fn == 'Lat-Long') {
+			            	vnu.lat_long = jp.getText();
+			            } else if (fn == 'longitude') {
+			            	vnu.longitude = jp.getDecimalValue();
+			            } else if (fn == 'latitude') {
+			            	vnu.latitude = jp.getDecimalValue();
+			            } else {
+								ignoreBadProperty( jp, fn );
+			            }
+                  } catch (exception e) { 
+                  	system.debug(LoggingLevel.WARN, 'Could not set ticket ' + fn + ' to ' + jp.getText());
+                  }
 	            }
 	        }
 	    }						
@@ -479,7 +491,11 @@ public with sharing class Eventbrite {
 		            } else if (fn == 'status') {
 		            	bc.status = jp.getText();
 		            } else if (fn == 'checkin_type') {
-		            	bc.checkin_type = jp.getIntegerValue();
+		            	try {
+		            		bc.checkin_type = jp.getIntegerValue();
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set barcode checkin_type to ' + jp.getText());
+	                  }
 		            } else if (fn == 'checkin_method') {
 		            	bc.checkin_method = jp.getText();
 		            } else if (fn == 'device_id') {
@@ -489,7 +505,7 @@ public with sharing class Eventbrite {
 		            } else if (fn == 'date_modified') {
 		            	bc.date_modified = datetime.valueOfGmt(jp.getText());
 		            } else {
-						ignoreBadProperty( jp, fn );
+							ignoreBadProperty( jp, fn );
 		            }
 	            }
 	        }
@@ -507,21 +523,40 @@ public with sharing class Eventbrite {
 		            if (fn == 'id') {
 		            	atd.id = string.valueOf(jp.getLongValue());
 		            } else if (fn == 'event_id') {
-		            	atd.event_id = string.valueOf(jp.getLongValue());
+		            	try {
+								atd.event_id = string.valueOf(jp.getLongValue());
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee event_id to ' + jp.getText());
+	                  }
+		            	
 		            } else if (fn == 'ticket_id') {
-		            	atd.ticket_id = string.valueOf(jp.getLongValue());
+		            	try {
+			            	atd.ticket_id = string.valueOf(jp.getLongValue());
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee ticket_id to ' + jp.getText());
+	                  }
 		            } else if (fn == 'quantity') {
-		            	atd.quantity = jp.getIntegerValue();
+		            	try {
+			            	atd.quantity = jp.getIntegerValue();
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee quantity to ' + jp.getText());
+	                  }
 		            } else if (fn == 'currency') {
 		            	atd.currency_code = jp.getText();
 		            } else if (fn == 'amount_paid') {
 		            	try {
 		            		atd.amount_paid = decimal.valueOf(jp.getText());
-		            	} catch (exception e) {}
+		            	} catch (exception e) {
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee amount_paid to ' + jp.getText());
+		            	}
 		            } else if (fn == 'barcode') {
 		            	atd.barcode = jp.getText().split(',');
 		            } else if (fn == 'order_id') {
-		            	atd.order_id = string.valueOf(jp.getLongValue());
+		            	try {
+			            	atd.order_id = string.valueOf(jp.getLongValue());
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee order_id to ' + jp.getText());
+	                  }
 		            } else if (fn == 'order_type') {
 		            	atd.order_type = jp.getText();
 		            } else if (fn == 'event_date') {
@@ -565,9 +600,15 @@ public with sharing class Eventbrite {
 		            } else if (fn == 'birth_date') {
                      try {
                         atd.birth_date = date.parse(jp.getText());
-                     } catch (exception e) { }
+                     } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee birth_date to ' + jp.getText());
+                     }
 		            } else if (fn == 'age') {
-		            	atd.age = jp.getIntegerValue();
+		            	try {
+			            	atd.age = jp.getIntegerValue();
+	                  } catch (exception e) { 
+	                  	system.debug(LoggingLevel.WARN, 'Could not set attendee age to ' + jp.getText());
+	                  }
 		            } else if (fn == 'home_address') {
 		            	if (atd.home_address == null) atd.home_address = new Eventbrite.Address();
 		            	atd.home_address.address = (atd.home_address.address != null) ? (jp.getText() + '\n' + atd.home_address.address) : jp.getText();
@@ -655,12 +696,12 @@ public with sharing class Eventbrite {
 					            		atd.barcodes = new list<Eventbrite.Barcode>();
 					                atd.barcodes.add( parseBarcode(jp) );
 					            } else {
-									ignoreBadProperty( jp, afn );
+										ignoreBadProperty( jp, afn );
 					            }
 					        }
 					    }		
 		            } else {
-						ignoreBadProperty( jp, fn );
+							ignoreBadProperty( jp, fn );
 		            }
 	            }
 	        }
@@ -669,7 +710,7 @@ public with sharing class Eventbrite {
 	}
 	
 	private void ignoreBadProperty( JSONParser jp, string badPropertyName ) {
-        System.debug(LoggingLevel.WARN, 'Unrecognized property in json data: ' + badPropertyName);
+      system.debug(LoggingLevel.WARN, 'Unrecognized property in json data: ' + badPropertyName + ' (' + jp.getText() + ')');
 		jp.skipChildren();
 	}
 
@@ -695,7 +736,8 @@ public with sharing class Eventbrite {
 		}
 	}
 
-	static testmethod void testEBdata() {
+	@isTest
+	static void testEBdata() {
 
 		Eventbrite eb;
 	

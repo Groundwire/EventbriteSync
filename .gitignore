@@ -29,6 +29,7 @@ src/remoteSiteSettings
 .settings
 .settings/com.salesforce.ide.core.prefs
 /.tm_properties
+<<<<<<< HEAD
 /config/objects/Account.object
 /config/objects/AccountContactRole.object
 /config/objects/Activity.object
@@ -59,3 +60,9 @@ src/remoteSiteSettings
 /config/settings.yaml
 /EB.sublime-project
 /src/package.xml
+=======
+/config/
+/EB.sublime-project
+>>>>>>> Ignore data when Eventbrite returns JSON that cannot be read into numeric variables
+
+/src/.DS_Store

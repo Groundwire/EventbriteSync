@@ -794,7 +794,8 @@ global with sharing class EventbriteImportController {
 				lead l = indexLeadMap.get(i);		
 				database.UpsertResult leadResult = leadResultMap.get(i);
 				if (leadResult == null) {
-					r.summary = 'Error! No ' + leadLabel + ' was created. ';
+					r.errorMessage = 'Error! No ' + leadLabel + ' was created. ';
+					system.debug(logginglevel.warn, r.errorMessage);
 				} else if (leadResult.isSuccess()) {
 					r.summary = leadResult.isCreated() ? 
 						'Created ' + leadLabel + '. ' : 
@@ -804,11 +805,16 @@ global with sharing class EventbriteImportController {
 					r.link = '/' + l.id;
 				} else {
 					list<database.Error> errs = leadResult.getErrors();
-					r.summary = 'Failed to create ' + leadLabel + '; ';
-					for (database.error err : errs) { 
-						r.summary += err.getMessage() + ' ';
-						system.debug(logginglevel.warn, err.getMessage());
+					r.errorMessage = 'Failed to create ' + leadLabel;
+					for (database.error err : errs) {
+						string msg = err.getMessage();
+						if (msg != null) {
+							if (msg.contains('DupeCatcher')) msg = 'prevented by DupeCatcher';
+							r.errorMessage += '; ' + msg;
+							system.debug(logginglevel.warn, msg);
+						}
 					}
+					r.errorMessage += '.';
 				}
 			} else if (indexContactMap.containsKey(i)) {
 				contact c = indexContactMap.get(i);		
@@ -827,9 +833,16 @@ global with sharing class EventbriteImportController {
 					r.link = '/' + c.id;
 				} else {
 					list<database.Error> errs = contactResult.getErrors();
-					r.summary = 'Failed to create ' + contactLabel + '; ';
-					for (database.error err : errs) 
-						r.summary += err.getMessage() + ' ';
+					r.errorMessage = 'Failed to create ' + contactLabel;
+					for (database.error err : errs) {
+						string msg = err.getMessage();
+						if (msg != null) {
+							if (msg.contains('DupeCatcher')) msg = 'prevented by DupeCatcher';
+							r.errorMessage += '; ' + msg;
+							system.debug(logginglevel.warn, msg);
+						}
+					}
+					r.errorMessage += '.';
 				}
 				
 				if (orderOppMap.containsKey(eba.order_id)) {
@@ -847,15 +860,20 @@ global with sharing class EventbriteImportController {
 						r.opportunityLink = '/' + o.id;
 					} else {
 						list<database.Error> errs = oppResult.getErrors();
-						r.summary += 'Failed to create ' + oppLabel + '; ';
-						for (database.error err : errs) { 
-							r.summary += err.getMessage() + ' ';
-							system.debug(logginglevel.warn, err.getMessage());
+						r.errorMessage = 'Failed to create ' + oppLabel;
+						for (database.error err : errs) {
+							string msg = err.getMessage();
+							if (msg != null) {
+								if (msg.contains('DupeCatcher')) msg = 'prevented by DupeCatcher';
+								r.errorMessage += '; ' + msg;
+								system.debug(logginglevel.warn, msg);
+							}
 						}
+						r.errorMessage += '.';
 					}
 				}
 			} else {
-				r.summary = 'Error! Nothing was created.';
+				r.errorMessage = 'Error! Nothing was created.';
 			}	
 			resultList.add(r);						 	
 		}
@@ -1066,6 +1084,6 @@ global with sharing class EventbriteImportController {
 				true, 1, 'Sent', null, null, null, false);			
 
 		system.assertEquals(1, result.size());
-		system.assertEquals('Failed to create ' + contactLabel + '; Email: invalid email address: bogus ', result[0].summary);		
+		system.assertEquals('Failed to create ' + contactLabel + '; Email: invalid email address: bogus.', result[0].errorMessage);		
 	}	
 }
